@@ -52,16 +52,44 @@ class Factor:
 		
 		raise Exception("Subclass must implement this method")
 
-class OR_Factor(Factor):
+	def printFactor(self, fh):
 
+		# print ID
+		fh.write(str(self.id)+"\n")
+		vars = []
+		dims = []
+		for (var, dim) in self.input_variables:
+			vars.append(var)
+			dims.append(dim)
+		fh.write(" ".join([str(i) for i in vars])+"\n")
+		fh.write(" ".join([str(i) for i in dims])+"\n")
+		# the number of states following
+		fh.write(str(len(self.states))+"\n")
+		# enumerate each state
+		index = 0
+		for state in self.states:
+			prob = self.probs[state]
+			fh.write(str(index)+"\t"+str(prob)+"\n")
+		fh.write("\n")
+
+class UNIFORM_Factor(Factor):
+	'''
+
+	'''
 	def makeTable(self):
 		'''
 		Iterate over all possible states of input variables: set the 
 		'''
+		UP = 0.1
 
 		states = self.iterateStates(self.input_variables)
+		self.states = []
 		for state in states:
-			
-			print "\t".join([str(i) for i in self.flatten(state)])
+			self.states.append(tuple(self.flatten(state)))
+
+		self.probs = {}
+		for state in self.states:
+			self.probs[state] = UP
+			#print "\t".join([str(i) for i in self.flatten(state)])
 		
 		

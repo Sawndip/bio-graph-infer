@@ -1,4 +1,5 @@
-
+import random
+from factor import *
 
 class Graph:
 	'''
@@ -12,7 +13,7 @@ class Graph:
 
 		self.graph = self.parseGraph(file)
 
-	def parseGraph(file):
+	def parseGraph(self, file):
 		'''
 			Store an index of (source, target) tuples to the (interaction, inference)
 			type. 
@@ -42,3 +43,28 @@ class Graph:
 	
 		return net
 	
+	def buildFactors(self):
+
+		self.factorIndex = {}
+		self.factors = {}
+		factorID = 1
+		for (source, target) in self.graph:
+			f = UNIFORM_Factor(factorID, ((source, 3), (target, 3)))
+			self.factorIndex[factorID] = (source, target)
+			self.factors[factorID] = f
+			factorID += 1
+
+	def printFactors(self, file):
+
+		fh = None
+		try:
+			fh = open(file, 'w')
+		except:
+			raise Exception("Error: cannot open factor file for writing"+file)
+
+		fh.write(str(len(self.factors))+"\n\n")
+		for fi in self.factors:
+			self.factors[fi].printFactor(fh)
+
+		fh.close()
+
