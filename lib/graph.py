@@ -50,7 +50,9 @@ class Graph:
 
 		emSteps = set()
 
-		factorID = 1
+		# the factors in the FG file are given an index based on the order,
+		# and this step will make sure the EM factor ids are in the same order
+		factorID = 0
 		for (source, target) in self.graph:
 			iType, em = self.graph[(source, target)]
 			f = None

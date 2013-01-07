@@ -62,8 +62,8 @@ class Factor:
 
 	def printFactor(self, fh):
 
-		# print ID
-		fh.write(str(self.id)+"\n")
+		# print the number of input_variables on which this factor depends
+		fh.write(str(len(self.input_variables))+"\n")
 		vars = []
 		dims = []
 		for (var, dim) in self.input_variables:
@@ -77,7 +77,8 @@ class Factor:
 		index = 0
 		for state in self.states:
 			prob = self.probs[state]
-			fh.write(str(index)+"\t"+str(prob)+"\n")
+			fh.write(str(index)+" "+str(prob)+"\n")
+			index += 1
 		fh.write("\n")
 
 class AC_Factor(Factor):
