@@ -47,12 +47,38 @@ class Graph:
 
 		self.factorIndex = {}
 		self.factors = {}
+
+		emSteps = set()
+
 		factorID = 1
 		for (source, target) in self.graph:
-			f = UNIFORM_Factor(factorID, ((source, 3), (target, 3)))
+			iType, em = self.graph[(source, target)]
+			f = None
+			# choose the factors (the prior) based on observed type of interaction
+			if iType == "->":
+				f = AC_Factor(factorID, ((source, 3), (target, 3)))
+			elif iType == "-|":
+				f = IA_Factor(factorID, ((source, 3), (target, 3)))
+			else:
+				raise Exception("Unsupported interaction type!")
+
+			# choose the EM operation to perform
+			if em == "E":
+				# learn this factor
+				emStep = EMStep({
+					'factor_id' : factorID,
+					'depends_on' : (source, target),
+					'var_dim' : 3,
+					'total_dim' : 9
+				})
+				emSteps.add(emStep)
+
+			
+			self.emSteps = EMSet(emSteps)
 			self.factorIndex[factorID] = (source, target)
 			self.factors[factorID] = f
 			factorID += 1
+
 
 	def printFactors(self, file):
 
@@ -68,3 +94,54 @@ class Graph:
 
 		fh.close()
 
+	def printEM(self, file):
+		self.emSteps.printToFile(file)
+
+class EMStep:
+
+	def __init__(self, opts):
+		'''
+			opts:
+			 = {
+				'factor_id' : the id of the factor in the graph
+				'depends_on' : the ids of the observed variables the factor depends on
+				'var_dim' : number of states for each observed variable
+				'total_dim' : number of total possible states
+				}
+		'''
+
+		self.factor_id = opts['factor_id']
+		self.depends_on = opts['depends_on']
+		self.var_dim = opts['var_dim']
+		self.total_dim = opts['total_dim']
+
+
+	def printEM(self, fh):
+
+		fh.write("CondProbEstimation [target_dim="+str(self.var_dim)+",total_dim="+str(self.total_dim)+",pseudo_count=1]\n")
+		# for now, allow only a single factor (no shared params)
+		fh.write("1\n")
+		fh.write(str(self.factor_id)+" "+" ".join([str(i) for i in self.depends_on])+"\n")
+
+
+class EMSet:
+
+
+	def __init__(self, emSteps):
+		self.steps = emSteps
+
+	def printToFile(self, file):
+		fh = None
+		try:
+			fh = open(file, 'w')
+		except:
+			raise Exception("Error: cannot open factor file for writing"+file)
+
+		# only a single maximization step supported for now
+		fh.write("1\n\n")
+
+		# print steps to file
+		fh.write(str(len(self.steps))+"\n")
+		for step in self.steps:
+			step.printEM(fh)			
+		fh.close()	

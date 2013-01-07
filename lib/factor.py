@@ -15,7 +15,15 @@ class Factor:
 		'''
 		self.id = id
 		self.input_variables = input_variables
+		self.generateStates()
 		self.tables = self.makeTable()
+
+	def generateStates(self):
+
+		states = self.iterateStates(self.input_variables)
+		self.states = []
+		for state in states:
+			self.states.append(tuple(self.flatten(state)))
 
 	def iterateStates(self, variables):
 		''' take the first variable, iterate over the possible states of the 
@@ -72,6 +80,55 @@ class Factor:
 			fh.write(str(index)+"\t"+str(prob)+"\n")
 		fh.write("\n")
 
+class AC_Factor(Factor):
+	'''
+	Represents an activating link for two nodes, with 3 states each: -1, 0, 1
+	'''
+	def makeTable(self):
+		'''
+		Iterate over all possible states of input variables: set the 
+		'''
+		MAJOR = 0.6
+		INT = 0.2
+		MINOR = 0.1
+
+		self.probs = {}
+		for state in self.states:
+			if state[0] == 1 and state[1] == 1:
+				# this is the neutral state: 
+				# set to no effect state
+				self.probs[state] = INT
+			elif state[0] == state[1]:
+				# activating, inactivating
+				self.probs[state] = MAJOR
+			else:
+				self.probs[state] = MINOR
+
+class IA_Factor(Factor):
+	'''
+	Represents an in-activating link for two nodes, with 3 states each: -1, 0, 1
+	'''
+	def makeTable(self):
+		'''
+		Iterate over all possible states of input variables: set the 
+		'''
+		MAJOR = 0.6
+		INT = 0.2
+		MINOR = 0.1
+
+		self.probs = {}
+		for state in self.states:
+			if state[0] == 1 and state[1] == 1:
+				# this is the neutral state: 
+				# set to no effect state
+				self.probs[state] = INT
+			elif state[0] != state[1]:
+				# activating, inactivating
+				self.probs[state] = MAJOR
+			else:
+				self.probs[state] = MINOR
+
+		
 class UNIFORM_Factor(Factor):
 	'''
 
@@ -80,12 +137,7 @@ class UNIFORM_Factor(Factor):
 		'''
 		Iterate over all possible states of input variables: set the 
 		'''
-		UP = 0.1
-
-		states = self.iterateStates(self.input_variables)
-		self.states = []
-		for state in states:
-			self.states.append(tuple(self.flatten(state)))
+		UP = 0.5
 
 		self.probs = {}
 		for state in self.states:

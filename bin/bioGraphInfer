@@ -1,16 +1,19 @@
 #!/usr/bin/env	python2.7
 
-from factor import *
-from graph import *
+import os, sys
+sys.path.append(sys.path[0]+"/../lib")
+
 from optparse import OptionParser
-sys.path.append("../lib")
 parser = OptionParser()
 parser.add_option("--pathway",dest="pathway",action="store",default=None)
 parser.add_option("--obs",dest="obs",action="store",default=None)
+parser.add_option("--output",dest="output",action="store",default=None)
 (opts, args) = parser.parse_args()
 
-#f = OR_Factor("tf", ((1,3),(2,2),(3,2)))
+from factor import *
+from graph import *
 
 fg = Graph(opts.pathway)
 fg.buildFactors()
-fg.printFactors("input/test.output.fg")
+fg.printFactors("output/test.output.fg")
+fg.printEM("output/test.output.em")
