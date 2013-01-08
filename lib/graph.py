@@ -8,11 +8,20 @@ class Graph:
 
 	'''
 
-
 	def __init__(self, file):
 
-		self.graph = self.parseGraph(file)
+		self.graph, self.nodeMap = self.parseGraph(file)
 
+	def mapNodes(self, node_list):
+		var_numbers = []
+		for n in node_list:
+			var_numbers.append(self.nodeMap[n])
+		return var_numbers
+
+	def addObs(self, observations):
+		# add the observation (Obs) object here
+		self.obs = observations
+	
 	def parseGraph(self, file):
 		'''
 			Store an index of (source, target) tuples to the (interaction, inference)
@@ -23,6 +32,11 @@ class Graph:
 			fh = open(file, 'r')
 		except:
 			raise Exception("Error: cannot open network file"+file)
+
+		# node mappings to numerical values: libDAI can only handle numbers
+		# so we need to build a mapping here
+		nodeIDX = 0
+		nodeMap = {}
 
 		net = {}
 		lineno = 1
@@ -36,12 +50,19 @@ class Graph:
 			target = parts[1]
 			interaction = parts[2]
 			inference = parts[3]
+
+			if source not in nodeMap:
+				nodeMap[source] = nodeIDX
+				nodeIDX += 1
+			if target not in nodeMap:
+				nodeMap[target] = nodeIDX
+				nodeIDX += 1
 	
-			net[(source, target)] = (interaction, inference)
+			net[(nodeMap[source], nodeMap[target])] = (interaction, inference)
 
 		fh.close()
 	
-		return net
+		return (net, nodeMap)
 	
 	def buildFactors(self):
 
@@ -96,6 +117,24 @@ class Graph:
 
 		fh.close()
 
+	def printOBS(self, file):
+
+		fh = None
+		try:
+			fh = open(file, 'w')
+		except:
+			raise Exception("Error: cannot open observation file for writing"+file)
+
+		# fix the observation header to use indexed variable numbers, corresponding to
+		# the factor graph derived from the pathway file
+		new_header = self.mapNodes(self.obs.header)
+		self.obs.setHeader(new_header)
+
+		# print to the output file 
+		self.obs.printHeader(fh)
+		self.obs.printSamples(fh)
+		fh.close()
+
 	def printEM(self, file):
 		self.emSteps.printToFile(file)
 
@@ -147,3 +186,36 @@ class EMSet:
 		for step in self.steps:
 			step.printEM(fh)			
 		fh.close()	
+
+
+class Obs:
+
+	def __init__(self, file):
+		fh = None
+		try:
+			fh = open(file, 'r')
+		except:
+			raise Exception("Error: cannot open observation file "+file)
+
+		self.header = None
+		self.samples = []	
+		for line in fh:
+			parts = line.rstrip().split("\t")
+			if self.header is None:
+				self.header = parts
+				continue
+
+			if line.isspace():
+				continue
+
+			self.samples.append(parts)
+
+	def setHeader(self, header):
+		self.header = header
+
+	def printHeader(self, fh):
+		fh.write("\t".join([str(i) for i in self.header])+"\n\n")
+
+	def printSamples(self, fh):
+		for sample in self.samples:
+			fh.write("\t".join(sample)+"\n")
