@@ -44,5 +44,7 @@ while True:
 		
 	
 # parse learned factor graph			
-for factor in Factor.readFactors(fh):
-	print factor.getID()
+#test = open('testout','w')
+#for factor in Factor.readFactors(fh):
+#	print factor.printFactor(test)
+#test.close()
