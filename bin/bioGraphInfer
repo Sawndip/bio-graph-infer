@@ -27,3 +27,22 @@ fg.printOBS(opts.output+"/input.tab")
 # run the libDAI code to do EM 
 print("Running EM...")
 output = call("cd "+opts.output+" && "+"../"+opts.bin+" > learned.fg", shell=True)
+fh = open(opts.output+"/learned.fg", 'r')
+
+# seek ahead to the learned factor graph
+while True:
+	line = fh.readline()
+
+	if line.startswith("Learned factor graph:"):
+		c = fh.readline()
+		numFactors = fh.readline()
+		ss = fh.readline()
+		break
+
+	if line == "":
+		raise Exception("Error: couldn't parse learned factor graph")
+		
+	
+# parse learned factor graph			
+for factor in Factor.readFactors(fh):
+	print factor.getID()

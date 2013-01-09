@@ -21,8 +21,11 @@ class Factor:
 			self.generateStates()
 			self.tables = self.makeTable()
 
+	def getID(self):
+		return self.id
+
 	@staticmethod
-	def readFactorFile(lines):
+	def readFactors(lines):
 		'''
 		Static method takes an input stream and parses it to generate a new factor object
 		'''
@@ -38,32 +41,22 @@ class Factor:
 
 		for line in lines:	
 
+			line = line.rstrip('\r\n\t ')
+
 			if line.isspace():
-				yield new_factor
-
-				# set a new factor
-				factorID += 1
-				new_factor = Factor(factorID)		
-				new_factor.var_num = None
-				new_factor.input_variables = None
-				new_factor.dims = None
-			
-				prob_lines = None
-				continue 
-
-			line = line.rstrip('\r\n')
+				continue
 
 			if not new_factor.var_num:
 				new_factor.var_num = line
 			elif not new_factor.input_variables:
 				new_factor.input_variables = line.split(" ")
-			elif not new_factor.dim:
-				new_factor.dim = line.split(" ")
+			elif not new_factor.dims:
+				new_factor.dims = line.split(" ")
 				# this is a bit of a hack: input_variables should be a set of tuples, with each
 				# variable, paired with it's dimension
 				nv = []
-				for i in range(0,len(new_factor.dim)):
-					nv.append((new_factor.input_variables[i], int(new_factor.dim[i])))
+				for i in range(0,len(new_factor.dims)):
+					nv.append((new_factor.input_variables[i], int(new_factor.dims[i])))
 				new_factor.input_variables = nv
 				# generate the ordered set of states
 				new_factor.generateStates()
@@ -72,13 +65,24 @@ class Factor:
 			else:
 				# set the probability 
 				prob_lines -= 1
-
-				idx, val = line.split(" ")
-				new_factor.setProb(idx, val)
+				idx, val = line.split()
+				new_factor.setProb(int(idx), float(val))
 					
+				if prob_lines == 0:
+					# on the last line of a block
+					yield new_factor
+
+					# set a new factor
+					factorID += 1
+					new_factor = Factor(factorID)		
+					new_factor.var_num = None
+					new_factor.input_variables = None
+					new_factor.dims = None
+			
+					prob_lines = None
 				
 	def setProb(self, state_index, prob):
-		state = self.states[index]	
+		state = self.states[state_index]	
 		self.probs[state] = prob
 
 	def generateStates(self):
