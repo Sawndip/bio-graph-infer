@@ -1,6 +1,7 @@
 #!/usr/bin/env	python2.7
 
 import os, sys
+from subprocess import call
 sys.path.append(sys.path[0]+"/../lib")
 
 from optparse import OptionParser
@@ -8,6 +9,7 @@ parser = OptionParser()
 parser.add_option("--pathway",dest="pathway",action="store",default=None)
 parser.add_option("--obs",dest="obs",action="store",default=None)
 parser.add_option("--output",dest="output",action="store",default=None)
+parser.add_option("--libdaiBIN",dest="bin",action="store",default=None)
 (opts, args) = parser.parse_args()
 
 from factor import *
@@ -18,6 +20,10 @@ obs = Obs(opts.obs)
 # add observation nodes
 fg.addObs(obs)
 fg.buildFactors()
-fg.printFactors("output/input.fg")
-fg.printEM("output/input.em")
-fg.printOBS("output/input.tab")
+fg.printFactors(opts.output+"/input.fg")
+fg.printEM(opts.output+"/input.em")
+fg.printOBS(opts.output+"/input.tab")
+
+# run the libDAI code to do EM 
+print("Running EM...")
+output = call("cd "+opts.output+" && "+"../"+opts.bin+" > learned.fg", shell=True)

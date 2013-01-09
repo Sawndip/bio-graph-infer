@@ -7,23 +7,19 @@ class Factor:
 	'''
 
 
-	def __init__(self, id, input_variables):
+	def __init__(self, id, input_variables=None):
 		'''
 			-input_variables : a tuple of tuples, of the inputs and dimension:
 				(1, 2), (2, 2), (3, 3), ...
 			-id : unique id for this factor
 		'''
 		self.id = id
-		self.input_variables = input_variables
-		self.generateStates()
-		self.tables = self.makeTable()
-
-	def __init__(self, id):
-		'''
-			-id : unique id for this factor
-		'''
-		self.id = id
-		self.probs = {}
+		if not input_variables:
+			self.probs = {}
+		else:
+			self.input_variables = input_variables
+			self.generateStates()
+			self.tables = self.makeTable()
 
 	@staticmethod
 	def readFactorFile(lines):
@@ -42,7 +38,7 @@ class Factor:
 
 		for line in lines:	
 
-            if line.isspace():
+			if line.isspace():
 				yield new_factor
 
 				# set a new factor
@@ -53,9 +49,9 @@ class Factor:
 				new_factor.dims = None
 			
 				prob_lines = None
-                continue 
+				continue 
 
-            line = line.rstrip('\r\n')
+			line = line.rstrip('\r\n')
 
 			if not new_factor.var_num:
 				new_factor.var_num = line
