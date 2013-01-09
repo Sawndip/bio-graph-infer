@@ -18,6 +18,73 @@ class Factor:
 		self.generateStates()
 		self.tables = self.makeTable()
 
+	def __init__(self, id):
+		'''
+			-id : unique id for this factor
+		'''
+		self.id = id
+		self.probs = {}
+
+	@staticmethod
+	def readFactorFile(lines):
+		'''
+		Static method takes an input stream and parses it to generate a new factor object
+		'''
+
+		factorID = 0
+
+		new_factor = Factor(factorID)
+		new_factor.var_num = None
+		new_factor.input_variables = None
+		new_factor.dims = None
+			
+		prob_lines = None
+
+		for line in lines:	
+
+            if line.isspace():
+				yield new_factor
+
+				# set a new factor
+				factorID += 1
+				new_factor = Factor(factorID)		
+				new_factor.var_num = None
+				new_factor.input_variables = None
+				new_factor.dims = None
+			
+				prob_lines = None
+                continue 
+
+            line = line.rstrip('\r\n')
+
+			if not new_factor.var_num:
+				new_factor.var_num = line
+			elif not new_factor.input_variables:
+				new_factor.input_variables = line.split(" ")
+			elif not new_factor.dim:
+				new_factor.dim = line.split(" ")
+				# this is a bit of a hack: input_variables should be a set of tuples, with each
+				# variable, paired with it's dimension
+				nv = []
+				for i in range(0,len(new_factor.dim)):
+					nv.append((new_factor.input_variables[i], int(new_factor.dim[i])))
+				new_factor.input_variables = nv
+				# generate the ordered set of states
+				new_factor.generateStates()
+			elif not prob_lines:
+				prob_lines = int(line)
+			else:
+				# set the probability 
+				prob_lines -= 1
+
+				idx, val = line.split(" ")
+				new_factor.setProb(idx, val)
+					
+				
+	def setProb(self, state_index, prob):
+		state = self.states[index]	
+		self.probs[state] = prob
+
 	def generateStates(self):
 
 		states = self.iterateStates(self.input_variables)
