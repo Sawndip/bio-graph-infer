@@ -22,8 +22,13 @@ fg.addObs(obs)
 fg.buildFactors()
 fg.printFactors(opts.output+"/input.fg")
 fg.printEM(opts.output+"/input.em")
-fg.printOBS(opts.output+"/input.tab")
 
+for tuple in fg.graph:
+	print fg.nodeID2Name(tuple[0])+"\t"+fg.nodeID2Name(tuple[1])+"\t"+str(fg.getMI(tuple))
+
+# read observations
+
+fg.printOBS(opts.output+"/input.tab")
 # run the libDAI code to do EM 
 print("Running EM...")
 output = call("cd "+opts.output+" && "+"../"+opts.bin+" > learned.fg", shell=True)
@@ -41,10 +46,15 @@ while True:
 
 	if line == "":
 		raise Exception("Error: couldn't parse learned factor graph")
-		
 	
 # parse learned factor graph			
-#test = open('testout','w')
-#for factor in Factor.readFactors(fh):
-#	print factor.printFactor(test)
-#test.close()
+test = open('testout','w')
+for factor in Factor.readFactors(fh):
+	fg.factors[factor.getID()] = factor
+test.close()
+
+print "---"
+
+for tuple in fg.graph:
+	print fg.nodeID2Name(tuple[0])+"\t"+fg.nodeID2Name(tuple[1])+"\t"+str(fg.getMI(tuple))
+

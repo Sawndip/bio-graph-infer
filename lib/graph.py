@@ -10,7 +10,7 @@ class Graph:
 
 	def __init__(self, file):
 
-		self.graph, self.nodeMap = self.parseGraph(file)
+		self.graph = self.parseGraph(file)
 
 	def mapNodes(self, node_list):
 		var_numbers = []
@@ -21,6 +21,9 @@ class Graph:
 	def addObs(self, observations):
 		# add the observation (Obs) object here
 		self.obs = observations
+
+	def nodeID2Name(self, id):
+		return self.reverseNodeMap[id]
 	
 	def parseGraph(self, file):
 		'''
@@ -36,7 +39,10 @@ class Graph:
 		# node mappings to numerical values: libDAI can only handle numbers
 		# so we need to build a mapping here
 		nodeIDX = 0
-		nodeMap = {}
+		# map[name] = index
+		self.nodeMap = {}
+		# map[index] = name
+		self.reverseNodeMap = {}
 
 		net = {}
 		lineno = 1
@@ -51,18 +57,20 @@ class Graph:
 			interaction = parts[2]
 			inference = parts[3]
 
-			if source not in nodeMap:
-				nodeMap[source] = nodeIDX
+			if source not in self.nodeMap:
+				self.nodeMap[source] = nodeIDX
+				self.reverseNodeMap[nodeIDX] = source
 				nodeIDX += 1
-			if target not in nodeMap:
-				nodeMap[target] = nodeIDX
+			if target not in self.nodeMap:
+				self.nodeMap[target] = nodeIDX
+				self.reverseNodeMap[nodeIDX] = target
 				nodeIDX += 1
 	
-			net[(nodeMap[source], nodeMap[target])] = (interaction, inference)
+			net[(self.nodeMap[source], self.nodeMap[target])] = (interaction, inference)
 
 		fh.close()
 	
-		return (net, nodeMap)
+		return (net)
 	
 	def buildFactors(self):
 
@@ -98,10 +106,27 @@ class Graph:
 
 			
 			self.emSteps = EMSet(emSteps)
-			self.factorIndex[factorID] = (source, target)
+			self.factorIndex[(source, target)] = factorID
 			self.factors[factorID] = f
 			factorID += 1
 
+	def getFactor(self, tuple):
+		'''
+			get the factor that represents the connection between these variables
+		'''
+		if tuple not in self.factorIndex:
+			return None
+
+		return self.factors[self.factorIndex[tuple]]
+
+	def getMI(self, tuple):
+
+		factor = self.getFactor(tuple)
+		if not factor:
+			return None
+
+		# only 2 variables per factor for now: use both
+		return factor.computeMI((0,1))
 
 	def printFactors(self, file):
 
@@ -197,6 +222,7 @@ class Obs:
 		except:
 			raise Exception("Error: cannot open observation file "+file)
 
+		self.valueMap = {-1:0, 0:1, 1:2} 
 		self.header = None
 		self.samples = []	
 		for line in fh:
@@ -218,4 +244,4 @@ class Obs:
 
 	def printSamples(self, fh):
 		for sample in self.samples:
-			fh.write("\t".join(sample)+"\n")
+			fh.write("\t".join([str(self.valueMap[int(v)]) for v in sample])+"\n")

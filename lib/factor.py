@@ -1,4 +1,5 @@
 import itertools
+import math
 
 class Factor:
 
@@ -109,6 +110,48 @@ class Factor:
 				states.append([state, value])
 			
 		return states	
+
+	def computeMI(self, tuple):
+		'''
+			Compute the pairwise MI between these variables, using the factor probability
+			table for computation.
+		'''
+		varIDX1 = tuple[0]
+		varIDX2 = tuple[1]
+		print varIDX2	
+		# compute (p(x=1,y=1) , p(x=1)
+		p12, pn12 = (0, 0)
+		p1, pn1 = (0, 0)
+		p2, pn2  = (0, 0)
+
+		# set-- 
+		STATE_ON = 2
+
+		for state in self.states:
+			p = self.probs[state]
+			s1, s2 = (state[int(varIDX1)], state[int(varIDX2)])
+			if s1 == STATE_ON:
+				p1 += p
+			else:
+				pn1 += p
+
+			if s2 == STATE_ON:
+				p2 += p
+			else:
+				pn2 += p
+
+			if s1 == STATE_ON and s2 == STATE_ON:
+				p12 += p
+			else:
+				pn12 += p
+
+		p_1 = p1/(pn1+p1)
+		p_2 = p2/(pn2+p2)
+		p_12 = p12/(p12 + pn12)
+
+		# pairwise MI in bits
+		mi = p_12*math.log((p_12/(p_1*p_2)), 2)
+		return mi
 
 	def flatten(self, q):
 		"""
