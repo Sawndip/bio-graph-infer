@@ -120,6 +120,7 @@ class Factor:
 		varIDX2 = tuple[1]
 		print varIDX2	
 		# compute (p(x=1,y=1) , p(x=1)
+		# probability of being either active 'on' or 'off'
 		p12, pn12 = (0, 0)
 		p1, pn1 = (0, 0)
 		p2, pn2  = (0, 0)
@@ -200,12 +201,22 @@ class AC_Factor(Factor):
 		Iterate over all possible states of input variables: set the 
 		'''
 		MAJOR = 0.6
-		INT = 0.2
-		MINOR = 0.1
+		INT = 0.333
+		MINOR = 0.2
+		# P(B|A) 
+		# A = 0 , B = 0 0.6
+		# A = 1 , B = 0 0.333
+		# A = 2 , B = 0 0.2
+		# A = 0 , B = 1 0.2
+		# A = 1 , B = 1 0.333
+		# A = 2 , B = 1 0.2
+		# A = 0 , B = 2 0.2
+		# A = 1 , B = 2 0.333
+		# A = 2 , B = 2 0.6
 
 		self.probs = {}
 		for state in self.states:
-			if state[0] == 1 and state[1] == 1:
+			if state[0] == 1:
 				# this is the neutral state: 
 				# set to no effect state
 				self.probs[state] = INT
@@ -224,21 +235,30 @@ class IA_Factor(Factor):
 		Iterate over all possible states of input variables: set the 
 		'''
 		MAJOR = 0.6
-		INT = 0.2
-		MINOR = 0.1
+		INT = 0.333
+		MINOR = 0.2
 
 		self.probs = {}
-		for state in self.states:
-			if state[0] == 1 and state[1] == 1:
-				# this is the neutral state: 
-				# set to no effect state
-				self.probs[state] = INT
-			elif state[0] != state[1]:
-				# activating, inactivating
-				self.probs[state] = MAJOR
-			else:
-				self.probs[state] = MINOR
+		# P(B|A) 
+		# A = 0 , B = 0 0.2
+		# A = 1 , B = 0 0.333
+		# A = 2 , B = 0 0.6
+		# A = 0 , B = 1 0.2
+		# A = 1 , B = 1 0.333
+		# A = 2 , B = 1 0.2
+		# A = 0 , B = 2 0.6
+		# A = 1 , B = 2 0.333
+		# A = 2 , B = 2 0.2
 
+		self.probs[(0,0)] = MINOR
+		self.probs[(1,0)] = INT
+		self.probs[(2,0)] = MAJOR
+		self.probs[(0,1)] = MINOR
+		self.probs[(1,1)] = INT
+		self.probs[(2,1)] = MINOR
+		self.probs[(0,2)] = MAJOR
+		self.probs[(1,2)] = INT
+		self.probs[(2,2)] = MINOR
 		
 class UNIFORM_Factor(Factor):
 	'''
@@ -248,7 +268,17 @@ class UNIFORM_Factor(Factor):
 		'''
 		Iterate over all possible states of input variables: set the 
 		'''
-		UP = 0.5
+		UP = 0.333
+		# P(B|A) 
+		# A = 0 , B = 0 0.333
+		# A = 1 , B = 0 0.333
+		# A = 2 , B = 0 0.333
+		# A = 0 , B = 1 0.333
+		# A = 1 , B = 1 0.333
+		# A = 2 , B = 1 0.333
+		# A = 0 , B = 2 0.333
+		# A = 1 , B = 2 0.333
+		# A = 2 , B = 2 0.333
 
 		self.probs = {}
 		for state in self.states:
