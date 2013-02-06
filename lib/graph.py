@@ -15,7 +15,12 @@ class Graph:
 	def mapNodes(self, node_list):
 		var_numbers = []
 		for n in node_list:
+
+			# if we have an observation not in the graph...
+			if n not in self.nodeMap:
+				continue
 			var_numbers.append(self.nodeMap[n])
+
 		return var_numbers
 
 	def addObs(self, observations):
@@ -49,13 +54,13 @@ class Graph:
 		for line in fh:
 	
 			parts = line.rstrip().split("\t")
-			if len(parts) != 4:
-				raise Exception("Error: cannot parse network at line "+str(lineno))
 
 			source = parts[0]
 			target = parts[1]
 			interaction = parts[2]
-			inference = parts[3]
+			inference = None
+			if len(parts) == 4:
+				inference = parts[3]
 
 			if source not in self.nodeMap:
 				self.nodeMap[source] = nodeIDX
@@ -103,12 +108,14 @@ class Graph:
 					'total_dim' : 9
 				})
 				emSteps.add(emStep)
-
 			
-			self.emSteps = EMSet(emSteps)
+			
 			self.factorIndex[(source, target)] = factorID
 			self.factors[factorID] = f
 			factorID += 1
+
+		# add emSteps selected
+		self.emSteps = EMSet(emSteps)
 
 	def getFactor(self, tuple):
 		'''
