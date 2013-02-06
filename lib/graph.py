@@ -224,17 +224,20 @@ class Obs:
 
 		self.valueMap = {-1:0, 0:1, 1:2} 
 		self.header = None
-		self.samples = []	
+		self.samples = {}
+		self.sample_order = []
 		for line in fh:
 			parts = line.rstrip().split("\t")
 			if self.header is None:
-				self.header = parts
+				self.header = parts[1:]
 				continue
 
 			if line.isspace():
 				continue
 
-			self.samples.append(parts)
+			# indexed by sample name: values are kept in the right order
+			self.samples[parts[0]] = parts[1:]
+			self.sample_order.append(parts[0])
 
 	def setHeader(self, header):
 		self.header = header
@@ -243,5 +246,8 @@ class Obs:
 		fh.write("\t".join([str(i) for i in self.header])+"\n\n")
 
 	def printSamples(self, fh):
-		for sample in self.samples:
-			fh.write("\t".join([str(self.valueMap[int(v)]) for v in sample])+"\n")
+		'''
+			Print out samples in the order tracked by self.sample_order 
+		'''
+		for sample in self.sample_order:
+			fh.write(sample+"\t"+"\t".join([str(self.valueMap[int(v)]) for v in self.samples[sample]])+"\n")
