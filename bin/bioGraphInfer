@@ -80,6 +80,7 @@ output = call("cd "+opts.output+" && "+"../"+opts.bin+" > learned", shell=True)
 splitEMfg(opts.output+"/learned")
 
 fh = open(opts.output+"/learned.fg", 'r')
+sllFH = open(opts.output+"/learned.sll", 'r')
 
 # original mutual information scores between edges
 old_MI_vals = getMIs(fg)
@@ -93,6 +94,8 @@ for factor in Factor.readFactors(fh):
 new_MI_vals = getMIs(fg)
 
 print "---"
+fg.addSampleLL(sllFH)
+fg.printSampleLL()
 
 for tuple in fg.graph:
 	oldMI = old_MI_vals[tuple]

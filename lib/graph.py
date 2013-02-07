@@ -181,6 +181,12 @@ class Graph:
 	def printEM(self, file):
 		self.emSteps.printToFile(file)
 
+	def addSampleLL(self, fh):
+		self.obs.addSampleLL(fh)
+
+	def printSampleLL(self):
+		self.obs.printSampleLL()
+		
 class EMStep:
 
 	def __init__(self, opts):
@@ -256,6 +262,25 @@ class Obs:
 			# indexed by sample name: values are kept in the right order
 			self.samples[parts[0]] = parts[1:]
 			self.sample_order.append(parts[0])
+
+	def addSampleLL(self, fh):
+		'''
+			Parse and ordered list of sample-specific log likelihood scores
+		'''
+		self.ssl = {}
+		idx = 0
+		for line in fh:
+			val = float(line.rstrip())
+			self.ssl[self.sample_order[idx]] = val
+			idx += 1
+
+	def printSampleLL(self):
+		'''
+			Parse and ordered list of sample-specific log likelihood scores
+		'''
+		for sample in self.sample_order:
+			print sample+"\t"+str(self.ssl[sample])
+
 
 	def setHeader(self, header):
 		self.header = header
