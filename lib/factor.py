@@ -127,7 +127,6 @@ class Factor:
 		'''
 		varIDX1 = tuple[0]
 		varIDX2 = tuple[1]
-		print varIDX2	
 		# compute (p(x=1,y=1) , p(x=1)
 		# probability of being either active 'on' or 'off'
 		p12, pn12 = (0, 0)

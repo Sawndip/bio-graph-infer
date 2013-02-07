@@ -294,7 +294,6 @@ class Obs:
 			Return the indexed values that have a subscript 
 		'''
 		retained = []
-		print indexes
 		for i in indexes:
 			retained.append(values[i])
 			

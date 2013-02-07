@@ -74,7 +74,7 @@ fg.printEM(opts.output+"/input.em")
 fg.printOBS(opts.output+"/input.tab")
 # run the libDAI code to do EM 
 print("Running EM...")
-output = call("cd "+opts.output+" && "+"../"+opts.bin+" > learned", shell=True)
+output = call("cd "+opts.output+" && "+"../"+opts.bin+" > learned 2>&1", shell=True)
 
 # parse and split into the learned factor graph, and sample log-likelihoods
 splitEMfg(opts.output+"/learned")
