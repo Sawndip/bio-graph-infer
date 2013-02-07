@@ -98,5 +98,5 @@ for tuple in fg.graph:
 	oldMI = old_MI_vals[tuple]
 	newMI = new_MI_vals[tuple]
 	if oldMI != newMI:
-		print fg.nodeID2Name(tuple[0])+"\t"+fg.nodeID2Name(tuple[1])+"\t"+str(newMI-oldMI)
+		print fg.nodeID2Name(tuple[0])+"\t"+fg.nodeID2Name(tuple[1])+"\t"+str(newMI)+"\t"+str(newMI-oldMI)
 

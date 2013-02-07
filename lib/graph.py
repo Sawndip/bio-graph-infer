@@ -14,10 +14,11 @@ class Graph:
 
 	def mapNodes(self, node_list):
 		var_numbers = []
-		idx = 0
+		idx = -1
 		included_index = []
 		for n in node_list:
 
+			# always update, and start at zero
 			idx += 1
 			# if we have an observation not in the graph...
 			if n not in self.nodeMap:
@@ -268,6 +269,7 @@ class Obs:
 			Return the indexed values that have a subscript 
 		'''
 		retained = []
+		print indexes
 		for i in indexes:
 			retained.append(values[i])
 			
