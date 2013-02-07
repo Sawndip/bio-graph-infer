@@ -14,14 +14,23 @@ class Graph:
 
 	def mapNodes(self, node_list):
 		var_numbers = []
+		idx = 0
+		included_index = []
 		for n in node_list:
 
+			idx += 1
 			# if we have an observation not in the graph...
 			if n not in self.nodeMap:
 				continue
+			# we need to track the index of this deletion, in order to remove 
+			# the data values associataed with it
+		
 			var_numbers.append(self.nodeMap[n])
 
-		return var_numbers
+			# these data values are included	
+			included_index.append(idx)
+
+		return (var_numbers, included_index)
 
 	def addObs(self, observations):
 		# add the observation (Obs) object here
@@ -159,8 +168,9 @@ class Graph:
 
 		# fix the observation header to use indexed variable numbers, corresponding to
 		# the factor graph derived from the pathway file
-		new_header = self.mapNodes(self.obs.header)
+		new_header, retained_indexes = self.mapNodes(self.obs.header)
 		self.obs.setHeader(new_header)
+		self.obs.retained_indexes = retained_indexes
 
 		# print to the output file 
 		self.obs.printHeader(fh)
@@ -252,9 +262,20 @@ class Obs:
 	def printHeader(self, fh):
 		fh.write("\t".join([str(i) for i in self.header])+"\n\n")
 
+	@staticmethod
+	def dataSubset(indexes, values):
+		'''
+			Return the indexed values that have a subscript 
+		'''
+		retained = []
+		for i in indexes:
+			retained.append(values[i])
+			
+		return retained
+
 	def printSamples(self, fh):
 		'''
 			Print out samples in the order tracked by self.sample_order 
 		'''
 		for sample in self.sample_order:
-			fh.write(sample+"\t"+"\t".join([str(self.valueMap[int(v)]) for v in self.samples[sample]])+"\n")
+			fh.write("\t".join([str(self.valueMap[int(v)]) for v in Obs.dataSubset(self.retained_indexes, self.samples[sample])])+"\n")

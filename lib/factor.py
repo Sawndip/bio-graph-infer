@@ -33,6 +33,7 @@ class Factor:
 
 		factorID = 0
 
+		number_factors = None
 		new_factor = Factor(factorID)
 		new_factor.var_num = None
 		new_factor.input_variables = None
@@ -46,6 +47,14 @@ class Factor:
 
 			if line.isspace():
 				continue
+
+			# the first line should be the number of factors
+			if not number_factors:
+				number_factors = int(line)
+				continue
+			# and stop after the last factor has been read
+			elif number_factors == factorID:
+				break
 
 			if not new_factor.var_num:
 				new_factor.var_num = line
