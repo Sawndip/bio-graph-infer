@@ -1,0 +1,103 @@
+#!/usr/bin/env	python2.7
+
+import os, sys
+from subprocess import call
+sys.path.append(sys.path[0]+"/../lib")
+
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("--pathway",dest="pathway",action="store",default=None)
+parser.add_option("--obs",dest="obs",action="store",default=None)
+parser.add_option("--output",dest="output",action="store",default=None)
+parser.add_option("--libdaiBIN",dest="bin",action="store",default=None)
+(opts, args) = parser.parse_args()
+
+from factor import *
+from graph import *
+
+def splitEMfg(file):
+	'''
+		parse output of runEM, and extract the learned factor graph files, along with sample log likelihoods		
+	'''
+
+	fh = open(file, 'r')
+	learnedFGH = open(file+".fg",'w')
+	likelihoodFGH = open(file+".sll",'w')
+	lgSTATE = None
+	for line in fh:
+
+
+		# find the start line and skip comments after
+		if line.startswith("Learned factor graph:"):
+			lgSTATE = 0
+			continue
+		if lgSTATE == 0:
+			lgSTATE = 1
+			continue
+
+		if lgSTATE is None:
+			continue
+
+		# start of likelihood data
+		if line.startswith('-'):
+			lgSTATE = 2
+			
+		if lgSTATE == 1:
+			learnedFGH.write(line.rstrip()+"\n")	
+		elif lgSTATE == 2:	
+			likelihoodFGH.write(line.rstrip()+"\n")	
+	
+	learnedFGH.close()	
+	likelihoodFGH.close()	
+
+def getMIs(fg):
+
+	mis = {}
+	for tuple in fg.graph:
+		mis[tuple] = fg.getMI(tuple)
+
+	return mis
+
+fg = Graph(opts.pathway)
+obs = Obs(opts.obs)
+# add observation nodes
+fg.addObs(obs)
+fg.buildFactors()
+fg.printFactors(opts.output+"/input.fg")
+fg.printEM(opts.output+"/input.em")
+
+#for tuple in fg.graph:
+#	print fg.nodeID2Name(tuple[0])+"\t"+fg.nodeID2Name(tuple[1])+"\t"+str(fg.getMI(tuple))
+
+# read observations
+
+fg.printOBS(opts.output+"/input.tab")
+# run the libDAI code to do EM 
+print("Running EM...")
+output = call("cd "+opts.output+" && "+"../"+opts.bin+" > learned.fg 2>em.err", shell=True)
+
+# parse and split into the learned factor graph, and sample log-likelihoods
+#splitEMfg(opts.output+"/learned")
+
+fh = open(opts.output+"/learned.fg", 'r')
+
+# original mutual information scores between edges
+old_MI_vals = getMIs(fg)
+
+# parse learned factor graph			
+# read 
+for factor in Factor.readFactors(fh):
+	fg.factors[factor.getID()] = factor
+
+# recompute the MIs on updated factor graph
+new_MI_vals = getMIs(fg)
+
+# produce the 
+for tuple in fg.graph:
+	oldMI_on, oldMI_off = old_MI_vals[tuple]
+	newMI_on, newMI_off = new_MI_vals[tuple]
+	newMI = newMI_on - newMI_off
+	oldMI = oldMI_on - oldMI_off
+	if oldMI != newMI:
+		print fg.nodeID2Name(tuple[0])+"\t"+fg.nodeID2Name(tuple[1])+"\t"+str(newMI)+"\t"+str(oldMI)
+
