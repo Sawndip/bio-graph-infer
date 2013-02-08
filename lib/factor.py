@@ -121,9 +121,29 @@ class Factor:
 		return states	
 
 	def computeMI(self, tuple):
+		
+		# set-- 
+		STATE_OFF = 0
+		STATE_N = 1
+		STATE_ON = 2
+
+		aa = self.computeMIcompare(STATE_ON, STATE_ON, tuple)
+		ii = self.computeMIcompare(STATE_OFF, STATE_OFF, tuple)
+		ai = self.computeMIcompare(STATE_ON, STATE_OFF, tuple)
+		ia = self.computeMIcompare(STATE_OFF, STATE_ON, tuple)
+	
+		on = aa+ii
+		off = ai+ia
+
+		return (on, off)
+		
+	def computeMIcompare(self, STATE1, STATE2, tuple):
 		'''
 			Compute the pairwise MI between these variables, using the factor probability
 			table for computation.
+
+			STATE1: the state of interest for variable one 
+			STATE2: state of interest for the second variable
 		'''
 		varIDX1 = tuple[0]
 		varIDX2 = tuple[1]
@@ -134,22 +154,24 @@ class Factor:
 		p2, pn2  = (0, 0)
 
 		# set-- 
+		STATE_OFF = 0
+		STATE_N = 1
 		STATE_ON = 2
 
 		for state in self.states:
 			p = self.probs[state]
 			s1, s2 = (state[int(varIDX1)], state[int(varIDX2)])
-			if s1 == STATE_ON:
+			if s1 == STATE1:
 				p1 += p
 			else:
 				pn1 += p
 
-			if s2 == STATE_ON:
+			if s2 == STATE2:
 				p2 += p
 			else:
 				pn2 += p
 
-			if s1 == STATE_ON and s2 == STATE_ON:
+			if s1 == STATE1 and s2 == STATE2:
 				p12 += p
 			else:
 				pn12 += p
@@ -157,10 +179,10 @@ class Factor:
 		p_1 = p1/(pn1+p1)
 		p_2 = p2/(pn2+p2)
 		p_12 = p12/(p12 + pn12)
-
 		# pairwise MI in bits
 		mi = p_12*math.log((p_12/(p_1*p_2)), 2)
 		return mi
+
 
 	def flatten(self, q):
 		"""
