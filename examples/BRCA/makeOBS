@@ -12,6 +12,12 @@ parser.add_option("-e","--expression",dest="expression",action="store",default=N
 parser.add_option("-z","--expr_threshold",dest="expr_threshold",action="store",default=1.5)
 (opts, args) = parser.parse_args()
 
+BINARY_VALUES = {
+	'UP':"1",
+	'DOWN':"-1",
+	'UNDEF':"0"
+}
+
 def classifyInteraction(i):
 	componentRE = re.compile(".*component.*")
 	activatingRE = re.compile(".*-(\S)>.*")
@@ -253,11 +259,11 @@ def tupleset2hash(setHash):
 def binarizeExpr(val, threshold):
 
 	if abs(val) < threshold:
-		return 0
+		return BINARY_VALUES["UNDEF"]
 	elif val > 0:
-		return 1
+		return BINARY_VALUES["UP"]
 	else:
-		return -1
+		return BINARY_VALUES["DOWN"]
 
 def obsVals(value):
 
@@ -301,6 +307,7 @@ for g in expr_genes:
 
 mut_hash = tupleset2hash(mutations)
 ev = []
+# ev variable indexes only genes that don't have mutational data
 for g in expr_order:
 	if g not in mut_genes:
 		ev.append(g)
@@ -313,13 +320,13 @@ for sample in mutations:
 			v = obsVals(mut_hash[sample][m])
 			printstr += "\t"+str(v)
 		else:
-			printstr += "\t1"
+			printstr += "\t"+BINARY_VALUES["UNDEF"]
 
 	for e in ev:
-		if e in expression[sample]:
+		if sample in expression and e in expression[sample]:
 			v = obsVals(binarizeExpr(expression[sample][e], TF_THRESHOLD))
 			printstr += "\t"+str(v)
 		else:
-			printstr += "\t1"
+			printstr += "\t"+BINARY_VALUES["UNDEF"]
 
 	print printstr

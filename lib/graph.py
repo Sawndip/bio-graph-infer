@@ -270,7 +270,11 @@ class Obs:
 		self.ssl = {}
 		idx = 0
 		for line in fh:
-			val = float(line.rstrip())
+			val = None
+			try: 
+				val = float(line.rstrip())
+			except:
+				continue
 			self.ssl[self.sample_order[idx]] = val
 			idx += 1
 
