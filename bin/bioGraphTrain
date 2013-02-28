@@ -76,6 +76,8 @@ fg.printOBS(opts.output+"/input.tab")
 print("Running EM...")
 output = call("cd "+opts.output+" && "+"../"+opts.bin+" > learned.fg 2>em.err", shell=True)
 
+THRESHOLD = 0.01
+
 # parse and split into the learned factor graph, and sample log-likelihoods
 #splitEMfg(opts.output+"/learned")
 
@@ -94,10 +96,21 @@ new_MI_vals = getMIs(fg)
 
 # produce the 
 for tuple in fg.graph:
-	oldMI_on, oldMI_off = old_MI_vals[tuple]
-	newMI_on, newMI_off = new_MI_vals[tuple]
-	newMI = newMI_on - newMI_off
-	oldMI = oldMI_on - oldMI_off
-	if oldMI != newMI:
-		print fg.nodeID2Name(tuple[0])+"\t"+fg.nodeID2Name(tuple[1])+"\t"+str(newMI)+"\t"+str(oldMI)
+	oldMI_act, oldMI_repress = old_MI_vals[tuple]
+	newMI_act, newMI_repress = new_MI_vals[tuple]
+	newMI = newMI_act - newMI_repress
+	oldMI = oldMI_act - oldMI_repress
+	if abs(newMI) < THRESHOLD:
+		continue
+
+	diff = newMI-oldMI
+	flipped = "+"
+	if (newMI > 0 and oldMI < 0) or (newMI < 0 and oldMI > 0):
+		flipped = "-"
+	
+	link = "->"
+	if newMI < 0:	
+		link = "-|"
+
+	print fg.nodeID2Name(tuple[0])+"\t"+fg.nodeID2Name(tuple[1])+"\t"+link+"\t"+str(newMI)+"\t"+str(diff)+"\t"+flipped
 

@@ -132,31 +132,25 @@ class Factor:
 		ai = self.computeMIcompare(STATE_ON, STATE_OFF, tuple)
 		ia = self.computeMIcompare(STATE_OFF, STATE_ON, tuple)
 	
-		on = aa+ii
-		off = ai+ia
+		activating = aa+ii
+		inactivating = ai+ia
 
-		return (on, off)
+		return (activating, inactivating)
 		
 	def computeMIcompare(self, STATE1, STATE2, tuple):
 		'''
-			Compute the pairwise MI between these variables, using the factor probability
-			table for computation.
+			Compute the pairwise MI between these variables being in the specified states, 
+			using the factor probability table for computation.
 
 			STATE1: the state of interest for variable one 
 			STATE2: state of interest for the second variable
 		'''
 		varIDX1 = tuple[0]
 		varIDX2 = tuple[1]
-		# compute (p(x=1,y=1) , p(x=1)
-		# probability of being either active 'on' or 'off'
+		# compute (p(x=1,y=1) , p(x=1) and p(y=1)
 		p12, pn12 = (0, 0)
 		p1, pn1 = (0, 0)
 		p2, pn2  = (0, 0)
-
-		# set-- 
-		STATE_OFF = 0
-		STATE_N = 1
-		STATE_ON = 2
 
 		for state in self.states:
 			p = self.probs[state]
