@@ -76,7 +76,7 @@ fg.printOBS(opts.output+"/input.tab")
 print("Running EM...")
 output = call("cd "+opts.output+" && "+"../"+opts.bin+" > learned.fg 2>em.err", shell=True)
 
-THRESHOLD = 0.01
+THRESHOLD = 0.15
 
 # parse and split into the learned factor graph, and sample log-likelihoods
 #splitEMfg(opts.output+"/learned")
@@ -100,8 +100,8 @@ for tuple in fg.graph:
 	newMI_act, newMI_repress = new_MI_vals[tuple]
 	newMI = newMI_act - newMI_repress
 	oldMI = oldMI_act - oldMI_repress
-	if abs(newMI) < THRESHOLD:
-		continue
+#	if abs(newMI) < THRESHOLD:
+#		continue
 
 	diff = newMI-oldMI
 	flipped = "+"

@@ -106,7 +106,7 @@ class Graph:
 			elif iType == "-|":
 				f = IA_Factor(factorID, ((source, 3), (target, 3)))
 			else:
-				raise Exception("Unsupported interaction type!")
+				raise Exception("Unsupported interaction type!"+iType)
 
 			# choose the EM operation to perform
 			if em == "E":
