@@ -294,9 +294,9 @@ def convertNetwork(network, perturbed_genes, tm_genes):
 
 	for node in nodes:
 		if node in perturbed_genes:
-			edge_list.append(("perturbed:"+node, node, "-|", "S.P"))
+			edge_list.append(("perturbed:"+node, node, "-||", "S.P"))
 		if node in tm_genes:
-			edge_list.append((node, "tm:"+node, "->", "S.T"))
+			edge_list.append((node, "tm:"+node, "->>", "S.T"))
 	
 			
 	return edge_list	 

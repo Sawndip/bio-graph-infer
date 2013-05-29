@@ -22,10 +22,12 @@ clean:
 	rm -f basal-train-lumA-test/learned.sll 
 	rm -f lumA-train-basal-test/learned.sll 
 	rm -f lumA-train-lumA-test/learned.sll
+	rm -f basal.train.in
+	rm -f lumA.train.in
 
 testx: basal-train-basal-test/learned.sll basal-train-lumA-test/learned.sll
 
-all: basal-training/learned.fa lumA-training/learned.fa basal-train-basal-test/learned.sll basal-train-lumA-test/learned.sll lumA-train-basal-test/learned.sll lumA-train-lumA-test/learned.sll
+all: basal-training/learned.fa lumA-training/learned.fa basal-train-basal-test/learned.sll basal-train-lumA-test/learned.sll lumA-train-basal-test/learned.sll lumA-train-lumA-test/learned.sll lumA.train.in basal.train.in
 
 basal-training/learned.fa:
 	join.pl input/obs.tab basal-training/samples.lst > basal-training/obs.tab

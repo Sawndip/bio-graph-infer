@@ -106,8 +106,10 @@ class Graph:
 				f = AC_Factor(factorID, ((source, 3), (target, 3)))
 			elif iType == "-|":
 				f = IA_Factor(factorID, ((source, 3), (target, 3)))
-			elif iType == "-":
-				f = UNIFORM_Factor(factorID, ((source, 3), (target, 3)))
+			elif iType == "-||":
+				f = P_Factor(factorID, ((source, 3), (target, 3)))
+			elif iType == "->>":
+				f = TM_Factor(factorID, ((source, 3), (target, 3)))
 			else:
 				raise Exception("Unsupported interaction type!"+iType)
 
