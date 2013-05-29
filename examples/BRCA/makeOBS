@@ -20,8 +20,8 @@ BINARY_VALUES = {
 
 def classifyInteraction(i):
 	componentRE = re.compile(".*component.*")
-	activatingRE = re.compile(".*-(\S)>.*")
-	inactivatingRE = re.compile(".*-(\S)|.*")
+	activatingRE = re.compile(".*-(\S?)>.*")
+	inactivatingRE = re.compile(".*-(\S?)|.*")
 	rewiredAC = re.compile(".*-REWIRED>.*")
 	rewiredIN = re.compile(".*-REWIRED|.*")
 

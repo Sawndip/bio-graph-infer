@@ -94,6 +94,7 @@ class Graph:
 
 		emSteps = set()
 
+		shared_steps = {}
 		# the factors in the FG file are given an index based on the order,
 		# and this step will make sure the EM factor ids are in the same order
 		factorID = 0
@@ -105,6 +106,8 @@ class Graph:
 				f = AC_Factor(factorID, ((source, 3), (target, 3)))
 			elif iType == "-|":
 				f = IA_Factor(factorID, ((source, 3), (target, 3)))
+			elif iType == "-":
+				f = UNIFORM_Factor(factorID, ((source, 3), (target, 3)))
 			else:
 				raise Exception("Unsupported interaction type!"+iType)
 
@@ -118,12 +121,24 @@ class Graph:
 					'total_dim' : 9
 				})
 				emSteps.add(emStep)
-			
+			elif em.startswith("S"):
+				# this is a shared factor: get the UID for the shared EM params
+				uid = em
+				if uid not in shared_steps:
+					shared_steps[uid] = []
+				shared_steps[uid].append((factorID, source, target))	
 			
 			self.factorIndex[(source, target)] = factorID
 			self.factors[factorID] = f
 			factorID += 1
 
+		for shared in shared_steps:
+			SEMStep = SharedEMStep({
+				'ids' : shared_steps[shared],
+				'var_dim' : 3,
+				'total_dim' : 9
+			})
+			emSteps.add(SEMStep)
 		# add emSteps selected
 		self.emSteps = EMSet(emSteps)
 
@@ -187,6 +202,30 @@ class Graph:
 	def printSampleLL(self):
 		self.obs.printSampleLL()
 		
+class SharedEMStep:
+
+	def __init__(self, opts):
+		'''
+			opts:
+			 = {
+				'ids' : tuple array of (id, source_var, target_var)
+				'var_dim' : number of states for each observed variable
+				'total_dim' : number of total possible states
+				}
+		'''
+
+		self.var_dim = opts['var_dim']
+		self.total_dim = opts['total_dim']
+		self.factors = opts['ids']
+
+	def printEM(self, fh):
+
+		fh.write("CondProbEstimation [target_dim="+str(self.var_dim)+",total_dim="+str(self.total_dim)+",pseudo_count=1]\n")
+		# for now, allow only a single factor (no shared params)
+		fh.write(str(len(self.factors))+"\n")
+		for (fid, s_v, t_v) in self.factors:
+			fh.write(str(fid)+" "+str(s_v)+" "+str(t_v)+"\n")
+
 class EMStep:
 
 	def __init__(self, opts):
@@ -235,7 +274,6 @@ class EMSet:
 		for step in self.steps:
 			step.printEM(fh)			
 		fh.close()	
-
 
 class Obs:
 
