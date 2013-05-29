@@ -10,6 +10,7 @@ parser.add_option("--pathway",dest="pathway",action="store",default=None)
 parser.add_option("--obs",dest="obs",action="store",default=None)
 parser.add_option("--output",dest="output",action="store",default=None)
 parser.add_option("--libdaiBIN",dest="bin",action="store",default=None)
+parser.add_option("--no_shared_em",dest="shared",action="store_false",default=True)
 (opts, args) = parser.parse_args()
 
 from factor import *
@@ -62,7 +63,7 @@ fg = Graph(opts.pathway)
 obs = Obs(opts.obs)
 # add observation nodes
 fg.addObs(obs)
-fg.buildFactors()
+fg.buildFactors(opts.shared)
 fg.printFactors(opts.output+"/input.fg")
 fg.printEM(opts.output+"/input.em")
 

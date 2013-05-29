@@ -87,7 +87,7 @@ class Graph:
 	
 		return (net)
 	
-	def buildFactors(self):
+	def buildFactors(self, shared):
 
 		self.factorIndex = {}
 		self.factors = {}
@@ -114,7 +114,7 @@ class Graph:
 				raise Exception("Unsupported interaction type!"+iType)
 
 			# choose the EM operation to perform
-			if em == "E":
+			if em == "E" or shared is False:
 				# learn this factor
 				emStep = EMStep({
 					'factor_id' : factorID,

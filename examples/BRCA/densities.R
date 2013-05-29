@@ -24,11 +24,13 @@ cdfL <- ddply(LT, .(subtype), summarize, rating.mean=mean(logl))
 
 # Density plots with semi-transparent fill
 pdf("lt.pdf")
-ggplot(LT, aes(x=logl, fill=subtype)) + geom_histogram(binwidth=.5, position="dodge") + 
+#ggplot(LT, aes(x=logl, fill=subtype)) + geom_histogram(binwidth=.5, position="dodge") + 
+ggplot(LT, aes(x=logl, fill=subtype)) + stat_density(position="stack", kernel="rectangular") + 
 opts(title = "Luminal A Trained Signature", plot.title=theme_text(size=20), axis.title.x = theme_text(size=18))
 
 pdf("bt.pdf")
-ggplot(BT, aes(x=logl, fill=subtype)) + geom_histogram(binwidth=.5, position="dodge") + 
+#ggplot(BT, aes(x=logl, fill=subtype)) + geom_histogram(binwidth=.5, position="dodge") + 
+ggplot(BT, aes(x=logl, fill=subtype)) + stat_density(position="stack", kernel="rectangular") + 
 opts(title = "Basal Trained Signature", plot.title=theme_text(size=20), axis.title.x = theme_text(size=18))
 
 
