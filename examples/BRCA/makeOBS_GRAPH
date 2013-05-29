@@ -1,0 +1,363 @@
+#!/usr/bin/env python2.7
+
+import os, sys, re
+from optparse import OptionParser
+from collections import defaultdict
+parser = OptionParser()
+parser.add_option("-n","--network",dest="network",action="store",default=None)
+parser.add_option("-f","--full_network",dest="full_network",action="store",default=None)
+parser.add_option("-m","--mutations",dest="mutations",action="store",default=None)
+parser.add_option("-t","--tf_genes",dest="tf_genes",action="store",default=None)
+parser.add_option("-e","--expression",dest="expression",action="store",default=None)
+parser.add_option("-z","--expr_threshold",dest="expr_threshold",action="store",default=1.5)
+parser.add_option("-o","--output_files",dest="output_files",action="store",default=1.5)
+(opts, args) = parser.parse_args()
+
+BINARY_VALUES = {
+	'UP':"1",
+	'DOWN':"-1",
+	'UNDEF':"0"
+}
+
+def classifyInteraction(i):
+	componentRE = re.compile(".*component.*")
+	activatingRE = re.compile(".*-(\S?)>.*")
+	inactivatingRE = re.compile(".*-(\S?)|.*")
+	rewiredAC = re.compile(".*-REWIRED>.*")
+	rewiredIN = re.compile(".*-REWIRED|.*")
+
+	if componentRE.match(i):
+		return (0, "c")
+	elif activatingRE.match(i):
+		type = activatingRE.match(i)
+		return (1, type.group(1))
+	elif inactivatingRE.match(i):
+		type = inactivatingRE.match(i)
+		return (2, type.group(1))
+	elif rewiredAC.match(i):
+		type = "a"
+		return (1, type)
+	elif rewiredIN.match(i):
+		type = "t"
+		return (2, type)
+	else:
+		# default to activating links for HPRD
+		return (1, "a")
+
+def hash2set(hashmap):
+
+	list = set() 
+	for key in hashmap:
+		list.add((key, hashmap[key]))
+
+	return list
+
+def getTFparents(network):
+	'''
+		Take a network object and index the upstream TFs for each gene
+		and the type of interaction for each
+		i.e. parents[gene] = (set(tf1, tf2....), {tf1:'a',tf2:'i'}}
+	'''
+
+	net = parseNet(network)
+	parents = {}
+	children = {}
+	for source in net:
+		for (int, target) in net[source]:
+
+			a_type, edge_type = classifyInteraction(int)
+			act = None
+
+			# only transcriptional
+			if edge_type != "t":
+				continue
+
+			# only activating or inactivating
+			if a_type == 1:
+				act = "a"
+			elif a_type == 0:
+				act = "i"
+			else:
+				continue
+	
+			if target not in parents:
+				parents[target] = (set(), {})
+			
+			parents[target][0].add(source)
+			parents[target][1][source] = act
+
+			if source not in children:
+				children[source] = set()
+
+			children[source].add(target)
+	
+	return (parents, children)	
+
+def parseMatrix(file, binary_threshold, tf_threshold, tf_genes, tf_parents):
+	''' 
+		Sample IDS should be the header line
+	'''
+
+	samples = {}
+		 
+	first = True
+	sampleIDS = None
+	for line in open(file, 'r'):
+		parts = line.rstrip().split("\t")
+		gene = parts[0]
+		vals = parts[1:]
+		if first:
+			first = False
+			sampleIDS = vals
+			fixedNames = []
+			for i in range(0, len(sampleIDS)):
+				sample = sampleIDS[i][0:12]
+				fixedNames.append(sample)
+				samples[sample] = defaultdict(int)
+			sampleIDS = fixedNames
+				
+			continue
+
+		for i in range(0,len(vals)):
+			val = None
+			try:
+				val = float(vals[i])
+			except:
+				continue
+			sample = sampleIDS[i]		
+			if abs(val) >= binary_threshold:
+
+				if gene not in tf_parents:
+					continue
+
+				# check, is this downstream of a TF of interest? 
+				# if so, add the TF, not the gene
+
+				parents, activation_type = tf_parents[gene]
+				for parent in tf_genes.intersection(parents):
+				
+					act = activation_type[parent]	
+					tf_act = None
+					# is this TF active? 
+					if act == 'a':
+						tf_act = val
+					elif act == 'i':	
+						tf_act = -1*val
+
+					samples[sample][parent] += tf_act
+
+	if tf_threshold is not None:
+		cleaned_samples = {}
+		for sample in samples:
+			for parent in samples[sample]:	
+				if abs(samples[sample][parent]) > tf_threshold:
+
+					if sample not in cleaned_samples:
+						cleaned_samples[sample] = {}
+					if parent not in cleaned_samples[sample]:
+						cleaned_samples[sample][parent] = samples[sample][parent]
+
+		return cleaned_samples
+	else:
+		return samples
+
+
+def getGenomicEffect(type):
+
+	effect = None
+	if type == "MUTATION":
+		effect = 1	
+	elif type == "AMPLIFICATION":
+		effect = -1	
+	elif type == "DELETION":
+		effect = 1	
+	elif type == "METHYLATION":
+		effect = 1	
+	else:
+		effect = 0
+
+	return effect
+
+def parsePerturbations(file):
+	''' 
+		Sample IDS should be the header line
+	'''
+
+	samples = {}
+		 
+	first = True
+	sampleIDS = None
+	for line in open(file, 'r'):
+		parts = line.rstrip().split("\t")
+		key = parts[0]
+		type = parts[1]
+		effect = getGenomicEffect(type)
+		vals = parts[2:]
+		if first:
+			first = False
+			sampleIDS = vals
+			fixedNames = []
+			for i in range(0, len(sampleIDS)):
+				sample = sampleIDS[i][0:12]
+				fixedNames.append(sample)
+				samples[sample] = set()
+			sampleIDS = fixedNames
+				
+			continue
+
+	
+		for i in range(0,len(vals)):
+			val = None
+			try:
+				val = abs(float(vals[i]))
+			except:
+				continue
+			sample = sampleIDS[i]		
+			if val > 0:
+				samples[sample].add((key,effect))	
+
+	return samples
+
+
+def	parseLST(file):
+
+	nodes = set()
+	for line in open(file, 'r'):
+		val = line.rstrip()	
+		nodes.add(val)
+
+	return nodes
+
+# build an index, source to targets fro the directed graph
+def parseNet(network):
+
+	net = {}
+	for line in open(network, 'r'):
+
+		parts = line.rstrip().split("\t")
+		source = parts[0]
+		interaction = parts[1]
+		target = parts[2]
+
+		if source not in net:
+			net[source] = set()
+
+		net[source].add((interaction, target))
+
+	return net
+
+
+def tupleset2hash(setHash):
+
+	hash = {}
+	for key in setHash:
+		hash[key] = {}
+		for (k, v) in setHash[key]:
+			hash[key][k] = v
+
+	return hash
+
+def binarizeExpr(val, threshold):
+
+	if abs(val) < threshold:
+		return BINARY_VALUES["UNDEF"]
+	elif val > 0:
+		return BINARY_VALUES["UP"]
+	else:
+		return BINARY_VALUES["DOWN"]
+
+def obsVals(value):
+
+	return value
+	
+	## remove
+	value = int(value)
+	if value == 0:
+		return 1
+	elif value == 1:
+		return 2
+	elif value == -1:
+		return 0
+	else:
+		return "NA"
+
+def convertNetwork(network, perturbed_genes, tm_genes):
+
+	edge_list = []
+	nodes = set()
+	for source in network:
+		nodes.add(source)
+		for (interaction, target) in network[source]:
+			nodes.add(target)
+			edge = (source, target, interaction, "E")
+			edge_list.append(edge)
+
+	for node in nodes:
+		if node in perturbed_genes:
+			edge_list.append(("perturbed:"+node, node, "-|", "S.P"))
+		if node in tm_genes:
+			edge_list.append((node, "tm:"+node, "->", "S.T"))
+	
+			
+	return edge_list	 
+			
+TF_THRESHOLD = 5.0
+
+network = parseNet(opts.network)
+parents, children = getTFparents(opts.full_network)
+mutations = parsePerturbations(opts.mutations)
+tf_genes = parseLST(opts.tf_genes)
+expression = parseMatrix(opts.expression, float(opts.expr_threshold), TF_THRESHOLD, tf_genes, parents)
+output_obs, output_network = opts.output_files.split(":")
+
+# produce a feature ordering for matrix output
+mut_order = []
+expr_order = []
+mut_genes = set()
+expr_genes = set()
+for sample in mutations:
+	for (m, v) in mutations[sample]:
+		mut_genes.add(m)
+for sample in expression:
+	for gene in expression[sample]:
+		expr_genes.add(gene)
+for g in mut_genes:
+	mut_order.append(g)
+for g in expr_genes:
+	expr_order.append(g)
+
+converted_network = convertNetwork(network, mut_genes, expr_genes)
+
+mut_hash = tupleset2hash(mutations)
+ev = []
+# ev variable indexes only genes that don't have mutational data
+#for g in expr_order:
+#	if g not in mut_genes:
+#		ev.append(g)
+
+output_obs_fh = open(output_obs, 'w')	
+output_net_fh = open(output_network, 'w')	
+output_obs_fh.write("Sample\t"+"\t".join(["perturbed:"+m for m in mut_order])+"\t"+"\t".join(["expr:"+e for e in expr_order])+"\n")
+for sample in mutations:
+	printstr = sample
+	for m in mut_order:
+		if m in mut_hash[sample]:
+			v = obsVals(mut_hash[sample][m])
+			printstr += "\t"+str(v)
+		else:
+			printstr += "\t"+BINARY_VALUES["UNDEF"]
+
+	for e in expr_order:
+		if sample in expression and e in expression[sample]:
+			v = obsVals(binarizeExpr(expression[sample][e], TF_THRESHOLD))
+			printstr += "\t"+str(v)
+		else:
+			printstr += "\t"+BINARY_VALUES["UNDEF"]
+
+	output_obs_fh.write(printstr+"\n")
+
+for edge in converted_network:
+	output_net_fh.write("\t".join(edge)+"\n")
+
+output_obs_fh.close()
+output_net_fh.close()
