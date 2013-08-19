@@ -14,6 +14,7 @@ parser.add_option("-s","--subnetwork",dest="subnetwork",action="store",default=N
 parser.add_option("-n","--full_network",dest="full_network",action="store",default=None)
 parser.add_option("-r","--rppa",dest="rppa",action="store",default=None)
 parser.add_option("-e","--expression",dest="expression",action="store",default=None)
+parser.add_option("-l","--labels",dest="labels",action="store",default=None)
 parser.add_option("-o","--output_files",dest="output_files",action="store",default=None)
 (opts, args) = parser.parse_args()
 
@@ -76,6 +77,18 @@ def hash2set(hashmap):
 		list.add((key, hashmap[key]))
 
 	return list
+
+def parseLabels(file):
+
+	labels = {}
+	for line in open(file, 'r'):
+		sample, status = line.rstrip().split("\t")
+		if status == "0":
+			labels[sample] = "-1"
+		elif status == "1":
+			labels[sample] = "1"	
+
+	return labels
 
 def getTFparents(network):
 	'''
@@ -330,6 +343,12 @@ def convertNetwork(network, rppa_data, expr_data):
 			edge_list.append(("rppa:"+node, node, "->>", "S.P"))
 		if node in expr_data:
 			edge_list.append(("expr:"+node, node, "->>", "S.T"))
+	
+
+	# for each hidden variable, create an edge to the output label
+	for node in nodes:
+		# create a uniform factor directed to the "Label" node
+		edge_list.append((node, "Label", "-", "E"))
 			
 	return edge_list	 
 
@@ -341,15 +360,6 @@ def getTFGenes(nodes, min_children=5):
 			master_regulators.add(source)
 
 	return master_regulators
-
-def parseLabels(file):
-	
-	sample_labels = {}
-	for line in open(file, 'r'):
-		sample, label = line.rstrip().split("\t")
-		sample_labels[sample] = int(label)
-
-	return sample_labels
 
 def parseRPPA(file):
 	
@@ -385,7 +395,8 @@ tf_genes = getTFGenes(children, 5)
 expression_data = parseMatrix(opts.expression, 0.0, TF_THRESHOLD, tf_genes, parents)
 # data[sample][node]
 rppa_data = parseRPPA(opts.rppa)
-
+# parse labels
+sample_labels = parseLabels(opts.labels)
 # generate gene orderings for both datasets, if included in one or more sample
 # , for each dataset
 rppa_genes = set()
@@ -409,9 +420,16 @@ converted_network = convertNetwork(subnetwork, rppa_genes_order, expr_genes_orde
 output_network, output_obs = opts.output_files.split(":")
 output_obs_fh = open(output_obs, 'w')	
 output_net_fh = open(output_network, 'w')	
-output_obs_fh.write("Sample\t"+"\t".join(["rppa:"+str(m) for m in rppa_genes_order])+"\t"+"\t".join(["expr:"+str(e) for e in expr_genes_order])+"\n")
+output_obs_fh.write("Sample\t"+"Label\t"+"\t".join(["rppa:"+str(m) for m in rppa_genes_order])+"\t"+"\t".join(["expr:"+str(e) for e in expr_genes_order])+"\n")
 for sample in rppa_data:
 	printstr = sample
+
+	# add label node value
+	if sample in sample_labels:
+		printstr += "\t"+str(sample_labels[sample])
+	else:
+		printstr += "\t"+BINARY_VALUES['UNDEF']
+	
 	for gene in rppa_genes_order:
 		if gene in rppa_data[sample]:
 			# convert to binary value

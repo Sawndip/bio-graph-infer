@@ -55,6 +55,12 @@ int main() {
 
         Real sample_logZ = clamped->logZ();
 		cout << sample_logZ << endl;
+
+		// output variable posterior inferences for this Sample
+  		for (size_t i = 0; i < Network.nrVars(); ++i) {
+      		const Var& v = Network.var(i);
+			Factor belief = clamped->belief(v);
+		}	
         delete clamped;
     }
 	// InfAlg* cloned = inf->clone();
