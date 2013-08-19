@@ -15,6 +15,11 @@ test-lumA:
 	../../bin/bioGraphTrain --no_shared_em --pathway input/pathway.tab --obs lumA/obs.tab --output lumA --libdaiBIN ../../bin/runEM_BP > lumA/em.summary
 	../../bin/bioGraphTest --pathway input/pathway.tab --obs lumA/obs.tab --output lumA --libdaiBIN ../../bin/runINFERENCES --fg lumA/learned.fg > lumA/learned.sll
 
+tt: trainTest
+	join.pl trainTest/obs.tab lumA-training/samples.lst > trainTest/train.obs.tab
+	join.pl trainTest/obs.tab lumA-test/samples.lst > trainTest/test.obs.tab
+	../../bin/trainTest --no_shared_em --pathway $</pathway.tab --train trainTest/train.obs.tab --test trainTest/test.obs.tab --output $< --libdaiBIN ../../bin/runEM_BP:../../bin/runINFERENCES 
+
 clean: 
 	rm -f basal-training/learned.fa 
 	rm -f lumA-training/learned.fa 
@@ -31,31 +36,31 @@ all: basal-training/learned.fa lumA-training/learned.fa basal-train-basal-test/l
 
 basal-training/learned.fa:
 	join.pl input/obs.tab basal-training/samples.lst > basal-training/obs.tab
-	../../bin/bioGraphTrain --no_shared_em --pathway input/pathway.tab --obs basal-training/obs.tab --output basal-training --libdaiBIN ../../bin/runEM_BP > basal-training/em.summary
+	../../bin/bioGraphTrain --pathway input/pathway.tab --obs basal-training/obs.tab --output basal-training --libdaiBIN ../../bin/runEM_BP > basal-training/em.summary
 
 lumA-training/learned.fa:
 	join.pl input/obs.tab lumA-training/samples.lst > lumA-training/obs.tab
-	../../bin/bioGraphTrain --no_shared_em --pathway input/pathway.tab --obs lumA-training/obs.tab --output lumA-training --libdaiBIN ../../bin/runEM_BP > lumA-training/em.summary
+	../../bin/bioGraphTrain --pathway input/pathway.tab --obs lumA-training/obs.tab --output lumA-training --libdaiBIN ../../bin/runEM_BP > lumA-training/em.summary
 
 # get sample likelihoods from on basal basal trained
 basal-train-basal-test/learned.sll:
 	join.pl input/obs.tab basal-test/samples.lst > basal-test/obs.tab
-	../../bin/bioGraphTest --no_shared_em --pathway input/pathway.tab --obs basal-test/obs.tab --output basal-train-basal-test --libdaiBIN ../../bin/runINFERENCES --fg basal-training/learned.fg > $@
+	../../bin/bioGraphTest --pathway input/pathway.tab --obs basal-test/obs.tab --output basal-train-basal-test --libdaiBIN ../../bin/runINFERENCES --fg basal-training/learned.fg > $@
 
 # use the basal trained factor graph
 basal-train-lumA-test/learned.sll:
 	join.pl input/obs.tab lumA-test/samples.lst > lumA-test/obs.tab
-	../../bin/bioGraphTest --no_shared_em --pathway input/pathway.tab --obs lumA-test/obs.tab --output basal-train-lumA-test --libdaiBIN ../../bin/runINFERENCES --fg basal-training/learned.fg > $@
+	../../bin/bioGraphTest --pathway input/pathway.tab --obs lumA-test/obs.tab --output basal-train-lumA-test --libdaiBIN ../../bin/runINFERENCES --fg basal-training/learned.fg > $@
 
 # get sample likelihoods from on basal basal trained
 lumA-train-basal-test/learned.sll:
 	join.pl input/obs.tab basal-test/samples.lst > basal-test/obs.tab
-	../../bin/bioGraphTest --no_shared_em --pathway input/pathway.tab --obs basal-test/obs.tab --output lumA-train-basal-test --libdaiBIN ../../bin/runINFERENCES --fg lumA-training/learned.fg > $@
+	../../bin/bioGraphTest --pathway input/pathway.tab --obs basal-test/obs.tab --output lumA-train-basal-test --libdaiBIN ../../bin/runINFERENCES --fg lumA-training/learned.fg > $@
 
 # use the basal trained factor graph
 lumA-train-lumA-test/learned.sll:
 	join.pl input/obs.tab lumA-test/samples.lst > lumA-test/obs.tab
-	../../bin/bioGraphTest --no_shared_em --pathway input/pathway.tab --obs lumA-test/obs.tab --output lumA-train-lumA-test --libdaiBIN ../../bin/runINFERENCES --fg lumA-training/learned.fg > $@
+	../../bin/bioGraphTest --pathway input/pathway.tab --obs lumA-test/obs.tab --output lumA-train-lumA-test --libdaiBIN ../../bin/runINFERENCES --fg lumA-training/learned.fg > $@
 
 lumA.train.in:
 	echo "subtype	logl" > $@

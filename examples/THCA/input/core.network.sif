@@ -1,0 +1,711 @@
+SMARCC2	-t>	SGK1
+SMARCC2	-a>	NR3C1
+SMARCC2	-t>	IFNB1
+SMARCC2	-a>	GTF2A1
+SMARCC2	-a>	GTF2E1
+SMARCC2	-a>	TAFs
+SMARCC2	-a>	chromatin remodeling (abstract)
+SMARCC1	-t>	SGK1
+SMARCC1	-a>	GTF2A1
+SMARCC1	-a>	GTF2E1
+SMARCC1	-a>	TAFs
+SMARCC1	-a>	NR3C1
+SMARCC1	-t>	IFNB1
+SMARCC1	-a>	chromatin remodeling (abstract)
+PPP3R1	-a>	BAD
+PLK3	-a>	CHEK2
+PLK3	-a>	TP53
+PLK3	-a>	TP73
+STK11	-a>	SMARCD3
+STK11	-t>	MYC
+STK11	-a>	PRKAA2
+AKT1	-a>	GSK3A
+AKT1	-a>	MLST8
+AKT1	-a|	GSK3B
+AKT1	-a>	MTOR
+AKT1	-a>	CDKN1A
+AKT1	-a>	BCL2
+AKT1	-a|	neuron apoptosis (abstract)
+AKT1	-a|	JNK cascade (abstract)
+AKT1	-a|	CAV1
+AKT1	-t>	MYC
+AKT1	-a>	YWHAE
+AKT1	-a>	GSK3B
+AKT1	-a>	TSC2
+AKT1	-a|	RB1
+AKT1	-a>	CDKN1B
+AKT1	-a>	DDIT4
+AKT1	-a|	CASP9
+AKT1	-a|	DDIT4
+AKT1	-a>	MYC
+AKT1	-a>	FRAP1
+AKT1	-a>	AKT2
+AKT1	member>	AKT1-2-active
+AKT1	-a>	RPTOR
+AKT1	-a>	TSC1
+AKT1	-a|	RAF1
+AKT1	-a|	BCL2
+AKT1	-a>	GLI2A
+AKT1	-a>	FOXO4
+AKT1	-a>	NFKB1
+AKT1	-a>	EIF4EBP1
+AKT1	-a>	BCL2L1
+AKT1	-a|	TSC2
+AKT1	-a|	BAD
+AKT1	-a>	BAD
+AKT1	-a>	FOXA2
+AKT1	-a|	TSC1
+AKT1	-a>	CASP9
+AKT1	-a|	BCL2L1
+AKT2	-a|	GSK3B
+AKT2	-a>	TSC1
+AKT2	-a>	TSC2
+AKT2	member>	AKT1-2-active
+CAV1	-a>	SHC1
+EEF2K	-a|	EEF2
+PECAM1	-a>	PXN
+PECAM1	-a>	SRC
+DVL3	-t>	MYC
+PIK3CA	-a>	MTOR
+PIK3CA	-a>	PXN
+PIK3CA	-a>	DAPP1
+PIK3CA	-a>	AKT1
+PIK3CA	-a>	MYC
+PIK3CA	-t>	CCND1
+PIK3CA	-a>	cell proliferation (abstract)
+PIK3CA	-a>	NFKB1
+PIK3CA	-a>	RELA
+PIK3CA	-a>	MAP2K1
+PIK3CA	-t>	BCL2L1
+CAMK4	-a>	STMN1
+CAMK4	-a|	MEF2C
+TP63-2	-t>	RUNX1
+TP63-2	-t|	TP63
+TP63-2	-t>	FOSL2
+TP63-2	-t>	MRE11A
+TP63-2	-t>	TP63
+TP63-5	-t>	CDKN1A
+TP63-5	-t|	CDKN1A
+TP63-5	-t>	SMARCD3
+RELA	-t>	JUN
+RELA	-t|	CSF2
+RELA	-t>	FOS
+RELA	-a>	BCL2A1
+RELA	-t|	BAX
+RELA	-t>	CCND1
+RELA	-a|	NFKB1
+RELA	-a>	cell proliferation (abstract)
+RELA	-a>	NFKB1
+RELA	-t>	IFNB1
+RELA	-t>	MYC
+RELA	-t>	BCL2L1
+ANGPT1	-a>	PIK3R1
+ANGPT1	-a>	NFKB1
+ANGPT1	-a>	PIK3CA
+ANGPT1	-a>	RELA
+ERBB2	-a>	cell proliferation (abstract)
+ERBB2	-a>	MAP2K1
+ERBB2	-a>	SHC1
+ERBB3	-a>	MAP2K1
+ERBB3	-a>	SHC1
+ERBB3	-a>	AKT1
+IGF1R	-a>	PIK3R1
+IGF1R	-a>	PXN
+IGF1R	-a|	IRS1
+IGF1R	-a>	RAF1
+IGF1R	-a>	PIK3CA
+IGF1R	-a>	SHC1
+SUMO2	-a>	NR3C1
+DDIT4	-a>	MLST8
+DDIT4	-a>	PRR5
+DDIT4	-a>	RICTOR
+DDIT4	-a>	RHEB
+DDIT4	-a>	MTOR
+DDIT4	-a>	MAPKAP1
+SHC1	-a>	p38alpha-beta-active
+SHC1	-a>	PIK3CA
+SHC1	-a>	AKT1
+SHC1	-a>	CAV1
+SHC1	-a>	PIK3R1
+SHC1	-a>	MAP2K1
+TP73-8	-t>	TP63-2
+TP73-8	-t|	BAK1
+TP73-8	-t>	HSF1
+O75519	-t>	IL5
+O75519	-t>	IL2RA
+O75519	-t>	CSF2
+O75519	-t>	IL3
+O75519	-t>	PTGS2
+PPP2R5A	-a>	MAX
+PPP2R5A	-a>	MYC
+SMARCD3	-a>	chromatin remodeling (abstract)
+JNK family-active	-a>	JUN
+JNK family-active	-a>	BCL2L11
+JNK family-active	-a>	NR3C1
+JNK family-active	-a>	BAD
+JNK family-active	-a>	FOXO4
+SMARCD1	-t>	SGK1
+SMARCD1	-a>	GTF2A1
+SMARCD1	-a>	GTF2E1
+SMARCD1	-a>	TAFs
+SMARCD1	-a>	NR3C1
+SMARCD1	-t>	IFNB1
+SMARCD1	-a>	chromatin remodeling (abstract)
+GLI2A	-t>	FOXA2
+GLI2A	-t>	GLI1
+GLI2A	-t>	PTCH1
+FOXA2	-t|	SCGB1A1
+FOXA2	-t>	HNF4A
+FOXA2	-t>	NKX2-1
+FOXA2	-t>	FOXA1
+FN1	-a>	ANGPT1
+FN1	-a>	IRS1
+FN1	-a>	IGF1R
+FN1	-a>	SRC
+HIPK2	-a>	TP53
+CCND1	-a|	RB1
+CCND1	-a|	FOXM1
+CCND1	-a>	TFDP1
+CCND1	-a>	RB1
+ARID1A	-a>	NR3C1
+ARID1A	-t>	IFNB1
+ARID1A	-a>	GTF2A1
+ARID1A	-a>	GTF2E1
+ARID1A	-a>	TAFs
+ARID1A	-a>	chromatin remodeling (abstract)
+GSK3A	-a|	FOXM1
+CSF2	-a>	PKA Family-active
+BAK1	-a>	activation of caspase activity by cytochrome c (abstract)
+BAK1	-a>	DIABLO
+FOXA1	-t>	CDKN1B
+FOXA1	-t>	FOXA2
+FOXA1	-t>	CCND1
+FOXA1	-t>	SCGB1A1
+FOXA1	-t|	NKX2-1
+FOXA1	-t>	XBP1
+FOXA1	-a>	chromatin remodeling (abstract)
+PTEN	-a>	SHC1
+TP73	-t>	CDKN1A
+TP73	-t>	BCL2L11
+TP73	-t>	BAK1
+TP73	-t|	CDKN1A
+TP73	-t>	TP73-8
+TP73	-t>	BAX
+TP73	-a>	TP73-8
+Antigen	-a>	GAB2
+Antigen	-a>	PIK3R1
+Antigen	-a>	NFATC2
+Antigen	-a|	JUN
+Antigen	-a|	FOS
+Antigen	-a>	PIK3CA
+Antigen	-a>	SHC1
+MAPK11	member>	p38alpha-beta-active
+NFATC1	-a|	NFATC2
+NFATC1	-a>	NFATC2
+NFATC1	-a>	NFATC3
+NFATC1	-a>	NFAT1-c-4
+NFATC1	member>	NFAT1-c-4-active
+NFATC1	-a>	NFAT1-c-4-active
+NFATC1	-t>	NR4A1
+NFATC2	-t>	CTLA4
+NFATC2	member>	NFAT1-c-4-active
+NFATC2	-t>	IL2RA
+NFATC2	-t>	NR4A1
+NFATC3	-a|	NFATC2
+NFATC3	-a>	NFATC2
+NFATC3	-a>	NFAT1-c-4
+NFATC3	member>	NFAT1-c-4-active
+NFATC3	-a>	NFATC1
+NFATC3	-a>	NFAT1-c-4-active
+NFAT1-c-4-active	-t>	IL5
+NFAT1-c-4-active	-t>	IL2RA
+NFAT1-c-4-active	-t>	CSF2
+NFAT1-c-4-active	-t>	IL3
+NFAT1-c-4-active	-t>	PTGS2
+CDKN1B	-t|	CCND1
+CDKN1B	-a>	CCND1
+response to stress (abstract)	-t>	TSC2
+response to stress (abstract)	-a|	MYC
+response to stress (abstract)	-t>	PTEN
+response to stress (abstract)	-a>	TP53
+response to stress (abstract)	-a|	MAX
+response to stress (abstract)	-a>	AKT1
+GAB2	-a>	AKT1
+KAT2A	-t>	CDKN1A
+KAT2A	-t>	BBC3
+KAT2A	-t>	MYC
+SMARCE1	-a>	GTF2A1
+SMARCE1	-a>	GTF2E1
+SMARCE1	-a>	TAFs
+SMARCE1	-a>	cell proliferation (abstract)
+SMARCE1	-a>	NR3C1
+SMARCE1	-t>	IFNB1
+SMARCE1	-a>	chromatin remodeling (abstract)
+RICTOR	-a>	SGK1
+RICTOR	-a>	AKT1
+hsa-miR-222	-r>	FOS
+hsa-miR-222	-r>	CDKN1B
+hsa-miR-222	-r>	STAT5A
+hsa-miR-222	-r>	KIT
+hsa-miR-222	-r>	PTEN
+hsa-miR-222	-r>	BBC3
+GTF2E1	-t>	IFNB1
+PKA Family-active	-a>	IL3
+PKA Family-active	-a>	CSF2
+TAFs	-t>	IFNB1
+TSC2	-a>	MLST8
+TSC2	-a>	PRR5
+TSC2	-a>	RICTOR
+TSC2	-a>	MTOR
+TSC2	-a>	RHEB
+TSC2	-a>	MAPKAP1
+TREX1	-a>	CHEK2
+TREX1	-a|	TP53
+TREX1	-a>	PLK3
+JUN	-t|	FOS
+JUN	-t>	CSF2
+JUN	-t>	IL5
+JUN	-t|	PTEN
+JUN	-t>	PTGS2
+JUN	-t>	MSH2
+JUN	-t>	FOS
+JUN	-t>	FOSL2
+JUN	-t>	IL3
+JUN	-t|	TP53
+JUN	-t>	DUSP1
+JUN	-t>	CCND1
+JUN	-t>	EPO
+JUN	-t|	CDKN1B
+JUN	-t>	HRK
+JUN	-a>	cell proliferation (abstract)
+JUN	-t>	FOSL1
+JUN	-t>	CTLA4
+JUN	-a>	JNK cascade (abstract)
+JUN	-t>	IL2RA
+JUN	-t>	IFNB1
+JUN	-t>	MYC
+JUN	-t>	NR3C1
+JUN	-t>	BCL2L11
+JUN	-t>	CDKN1A
+JUN	-t>	BCL2L1
+chromatin remodeling (abstract)	-a>	NF1
+chromatin remodeling (abstract)	-a>	NR3C1
+chromatin remodeling (abstract)	-t>	CCND1
+chromatin remodeling (abstract)	-a>	SMARCC1
+chromatin remodeling (abstract)	-a>	SMARCE1
+chromatin remodeling (abstract)	-a>	SMARCC2
+chromatin remodeling (abstract)	-a>	SMARCD1
+chromatin remodeling (abstract)	-a>	ARID1A
+chromatin remodeling (abstract)	-a>	SMARCB1
+AKT1-2-active	-a>	MTOR
+AKT1-2-active	-a>	MLST8
+AKT1-2-active	-a>	RPTOR
+AKT1-2-active	-a|	BAD
+PIK3R1	-a>	MTOR
+PIK3R1	-a>	PXN
+PIK3R1	-a>	DAPP1
+PIK3R1	-a>	AKT1
+PIK3R1	-a>	RELA
+PIK3R1	-t>	CCND1
+PIK3R1	-a>	cell proliferation (abstract)
+PIK3R1	-a>	NFKB1
+PIK3R1	-a>	MYC
+PIK3R1	-a>	MAP2K1
+PIK3R1	-t>	BCL2L1
+ANGPT2	-t>	CDKN1A
+ANGPT2	-a>	PIK3R1
+ANGPT2	-a>	STAT5A
+ANGPT2	-a>	PIK3CA
+GSK3B	-a|	AR
+GSK3B	-a>	MAPT
+GSK3B	-a>	NFATC2
+GSK3B	-a>	TSC2
+GSK3B	-a>	DDIT4
+GSK3B	-a>	MYC
+GSK3B	-a>	TSC1
+GSK3B	-a>	NFATC1
+GSK3B	-a>	MAX
+GSK3B	-a|	MAPT
+GSK3B	-a|	NFATC1
+GSK3B	-a>	NR3C1
+GSK3B	-a>	CCND1
+GSK3B	-a|	TP53
+CHEK2	-a>	MDM4
+CHEK2	-a>	TP53
+JNK cascade (abstract)	-a>	JUN
+JNK cascade (abstract)	-a>	FOS
+Q99653	-a|	NFATC2
+Q99653	-a>	NFATC2
+Q99653	-a>	NFATC3
+Q99653	-a>	NFAT1-c-4
+Q99653	-a>	NFATC1
+Q99653	-a>	NFAT1-c-4-active
+TCF1	-t>	MYC
+TCF1	-t|	MYC
+TCF1	-t|	CCND1
+TCF1	-t>	CCND1
+IL4R	-a>	PIK3R1
+IL4R	-a>	PIK3CA
+IL4R	-a>	SHC1
+FOS	-t>	CSF2
+FOS	-t>	JUN
+FOS	-t>	PTGS2
+FOS	-t|	CDKN1B
+FOS	-a>	FOSL1
+FOS	-t>	FOSL2
+FOS	-t>	IL3
+FOS	-t|	TP53
+FOS	-a>	FOSL2
+FOS	-t>	CCND1
+FOS	-t>	CTLA4
+FOS	-a>	cell proliferation (abstract)
+FOS	-t>	IL5
+FOS	-t>	IFNB1
+FOS	-t>	NR3C1
+FOS	-t>	IL2RA
+Amino Acids (abstract)	-a>	DEPTOR
+Amino Acids (abstract)	-a>	MTOR
+Amino Acids (abstract)	-a>	RPTOR
+Amino Acids (abstract)	-a>	MLST8
+Amino Acids (abstract)	-a>	AKT1S1
+RPS6KA1	-a>	TSC2
+RPS6KA1	-a>	DDIT4
+RPS6KA1	-a>	TSC1
+RPS6KA1	-a>	TCF1
+TAF9	-t>	CDKN1A
+TAF9	-t>	BBC3
+MEF2C	-a|	neuron apoptosis (abstract)
+BCL2L1	-a>	DIABLO
+BATF3	-t>	IL5
+BATF3	-t>	PTGS2
+BATF3	-t>	CSF2
+BATF3	-t>	IL3
+BATF3	-t>	IL2RA
+LCK	-a>	PIK3CA
+LCK	-a>	p38alpha-beta-active
+LCK	-a>	SHC1
+LCK	-a>	AKT1
+LCK	-a>	RELA
+LCK	-a|	IL2RA
+LCK	-a>	PIK3R1
+LCK	-a>	cell proliferation (abstract)
+LCK	-a>	NFKB1
+LCK	-t>	MYC
+LCK	-t>	BCL2L1
+hsa-miR-221	-r>	FOS
+hsa-miR-221	-r>	CDKN1B
+hsa-miR-221	-r>	PIK3R1
+hsa-miR-221	-r>	KIT
+hsa-miR-221	-r>	DDIT4
+hsa-miR-221	-r>	PTEN
+hsa-miR-221	-r>	BBC3
+TNFRSF11A	-a>	FOS
+BAG1	-t>	BCL2L11
+YY1	-t|	AKT3
+YY1	-t>	MYC
+YY1	-a>	TP53
+XIAP	-a>	JNK cascade (abstract)
+XIAP	-a>	HIPK2
+FOXM1	-t>	MYC
+FOXM1	-t>	FOS
+FOXM1	-t>	NFATC3
+DIABLO	-a>	CASP9
+CDC2	-a>	STMN1
+CDC2	-a|	RB1
+RAF1	-a>	MAP2K1
+RAF1	-a|	RB1
+RAF1	-a>	BAD
+RAF1	-a>	MAPK1
+TSC1	-a>	RHEB
+TSC1	-a>	PRR5
+TSC1	-a>	RICTOR
+TSC1	-a>	MTOR
+TSC1	-a>	MAPKAP1
+TSC1	-a>	MLST8
+TP63	-t>	CDKN1A
+TP63	-a>	TP63-5
+TP63	-t>	PMAIP1
+TP63	-t>	BAX
+TP63	-a>	TP63-2
+MRE11A	-a>	CHEK2
+MRE11A	-a>	rRNA transcription (abstract)
+ZBTB17	-t>	CDKN1A
+ZBTB17	-t>	CCND1
+ZBTB17	-t|	CDKN1A
+ZBTB17	-t|	BCL2
+ZBTB17	-t>	BCL2
+MAPK3	-a>	BAD
+MAPK3	-t>	FOS
+MAPK3	-a>	MITF
+MAPK3	-a>	TCF1
+MAPK3	-a>	MYC
+MAPK3	-a>	JUN
+MAPK3	-a>	FOS
+MAPK3	-a|	BCL2
+MAPK3	-a>	cell proliferation (abstract)
+MAPK3	-a>	RPS6KA1
+MAPK3	-a>	RELA
+MAPK3	-a>	MAP2K1
+MAPK3	-a>	RPS6KA5
+MAPK1	-a>	JUN
+MAPK1	-t>	FOS
+MAPK1	-a>	TCF1
+MAPK1	-a>	RELA
+MAPK1	-a>	MITF
+MAPK1	-a|	BCL2
+MAPK1	-a>	cell proliferation (abstract)
+MAPK1	-a>	RPS6KA1
+MAPK1	-a>	MYC
+MAPK1	-a>	RPS6KA5
+MAPK1	-a>	FOS
+FOSL1	-t>	CCND1
+MAPK7	-a>	RPS6KA1
+MAPK7	-a>	cell proliferation (abstract)
+MAPK7	-a>	MEF2C
+FOSL2	-t>	CCND1
+FOSL2	-t>	FOSL1
+NFKB1	-t|	AKT3
+NFKB1	-t>	MYC
+NFKB1	-a|	RELA
+NFKB1	-t>	RELA
+NFKB1	-a>	RELA
+NFKB1	-t|	CSF2
+NFKB1	-a>	BCL2A1
+NFKB1	-t>	BCL2L1
+MAPK9	-a>	NFATC2
+MAPK9	member>	JNK family-active
+MAPK9	-a>	NFATC3
+MAPK9	-a>	NFAT1-c-4
+MAPK9	-a>	NFAT1-c-4-active
+MAPK9	-a>	NFATC1
+MAPK9	-a|	NFATC2
+DUSP1	-a>	MAPK11
+CDKN1A	-t|	CCND1
+CDKN1A	-a|	RB1
+CDKN1A	-a>	CCND1
+CDKN1A	-a|	TFDP1
+CDKN1A	-a>	RB1
+CDKN1A	-a>	CDC2
+NKD1	-a>	JUN
+NKD1	-a>	FOS
+SRC	-a>	PXN
+SRC	-a>	STAT5A
+SRC	-a>	AKT1
+SRC	-a>	SHC1
+SRC	-a>	PECAM1
+SRC	-a>	MAPK1
+SRC	-a>	RELA
+SRC	-a>	CAV1
+SRC	-a>	SGK1
+SRC	-a>	EGFR
+SRC	-a>	PIK3R1
+SRC	-a>	cell proliferation (abstract)
+SRC	-a>	IGF1R
+SRC	-a>	NFKB1
+SRC	-a>	MAP2K1
+SRC	-a>	PIK3CA
+SRC	-a>	MAPK3
+MTOR	-a>	NFATC3
+MTOR	-a>	AKT1
+MTOR	-a>	MAPK9
+MTOR	-a>	RELA
+MTOR	-a>	NFATC1
+MTOR	-a>	SGK1
+MTOR	-t>	BCL2
+MTOR	-a>	Q99653
+MTOR	-a>	IRS1
+MTOR	-a>	NFKB1
+MTOR	-a>	EIF4EBP1
+MAX	-t>	TP53
+MAX	-t|	TSC2
+MAX	-t>	PMAIP1
+MAX	-t|	BCL2
+MAX	-t>	BAX
+MAX	-t|	ERBB2
+MAX	-t|	MYC
+MAX	-a>	rRNA transcription (abstract)
+MAX	-t>	FOSL1
+MAX	-t|	CDKN1A
+MAX	-t|	CDKN1B
+TP53	-t>	PMAIP1
+TP53	-t>	TP73
+TP53	-a>	neuron apoptosis (abstract)
+TP53	-a>	BAX
+TP53	-t>	CDKN1A
+TP53	-t>	TSC2
+TP53	-t>	PTEN
+TP53	-t>	BAX
+TP53	-t>	TP63
+TP53	-t>	DUSP1
+TP53	-t>	DDIT4
+TP53	-t>	PLK3
+TP53	-t|	CDKN1A
+TP53	-t>	EPO
+TP53	-t>	RB1
+TP53	-t>	BBC3
+TP53	-t>	MSH2
+TP53	-t|	BCL2
+TP53	-t>	BCL2L14
+TP53	-t>	EGFR
+TP53	-a>	activation of caspase activity by cytochrome c (abstract)
+TP53	-t>	CAV1
+TP53	-t|	BBC3
+MLST8	-a>	IRS1
+MLST8	-a>	EIF4EBP1
+MLST8	-a>	SGK1
+MLST8	-a>	AKT1
+MYC	-t>	PMAIP1
+MYC	-t|	ERBB2
+MYC	-t|	CDKN1B
+MYC	-t>	FOSL1
+MYC	-t|	TSC2
+MYC	-t>	BAX
+MYC	-t|	CDKN1A
+MYC	-a>	rRNA transcription (abstract)
+MYC	-a>	cell proliferation (abstract)
+MYC	-t>	TP53
+MYC	-t|	BCL2
+IL2RA	-a>	PIK3R1
+IL2RA	-a>	IRS1
+IL2RA	-a>	cell proliferation (abstract)
+IL2RA	-a>	p38alpha-beta-active
+IL2RA	-t>	MYC
+IL2RA	-a>	PIK3CA
+IL2RA	-a>	SHC1
+IL2RA	-a>	AKT1
+DAPP1	-a|	NFATC1
+IRS1	-a>	PIK3R1
+IRS1	-a>	PXN
+IRS1	-a>	CAV1
+IRS1	-a>	PIK3CA
+BAD	-a|	neuron apoptosis (abstract)
+BAD	-a|	BCL2L1
+STAT5A	-t>	CDKN1A
+IL5	-a>	PIK3R1
+IL5	-a>	cell proliferation (abstract)
+IL5	-a>	PIK3CA
+EPO	-a>	SHC1
+EPO	-a>	NFKB1
+IL3	-a>	PIK3R1
+IL3	-a>	PKA Family-active
+IL3	-a>	PIK3CA
+IL3	-a>	SHC1
+RHEB	-a>	MLST8
+RHEB	-a>	FRAP1
+RHEB	-a>	MTOR
+RHEB	-a>	RPTOR
+p38alpha-beta-active	-a>	MITF
+p38alpha-beta-active	-a>	NR3C1
+p38alpha-beta-active	-a|	cell proliferation (abstract)
+p38alpha-beta-active	-t>	PTGS2
+p38alpha-beta-active	-a>	TSC2
+p38alpha-beta-active	-a|	XIAP
+p38alpha-beta-active	-a>	TP53
+p38alpha-beta-active	-a>	TP73
+p38alpha-beta-active	-a>	MEF2C
+p38alpha-beta-active	-a>	MAPKAPK5
+JUNB	-t>	CSF2
+EGFR	-a>	PIK3R1
+EGFR	-a>	CAV1
+EGFR	-a>	SRC
+EGFR	-a>	MTOR
+EGFR	-a>	PIK3CA
+EGFR	-a>	MAPK1
+EGFR	-a>	SHC1
+EGFR	-a>	MAPK3
+FRAP1	-a|	EIF4EBP1
+FRAP1	-a>	cell proliferation (abstract)
+BAX	-a>	activation of caspase activity by cytochrome c (abstract)
+BAX	-a>	DIABLO
+MAP2K1	-a>	FOXM1
+MAP2K1	-a>	GLI2A
+MAP2K1	-a>	MAPK1
+MAP2K1	-a>	MAPK3
+GTF2A1	-t>	IFNB1
+MITF	-t>	BCL2
+MITF	-t>	CDKN1A
+NFAT1-c-4	-t>	IL5
+NFAT1-c-4	-t>	IL2RA
+NFAT1-c-4	-t>	CSF2
+NFAT1-c-4	-t>	IL3
+NFAT1-c-4	-t>	BCL2
+NFAT1-c-4	-t>	PTGS2
+RPTOR	-a>	IRS1
+RPTOR	-a>	EIF4EBP1
+PRR5	-a>	SGK1
+PRR5	-a>	AKT1
+RB1	-t>	CDKN1A
+RB1	-a|	rRNA transcription (abstract)
+RB1	-t|	MYC
+RB1	-a>	MEF2C
+MAPKAP1	-a>	SGK1
+MAPKAP1	-a>	AKT1
+TFDP1	-t>	BBC3
+TFDP1	-t>	CDC2
+TFDP1	-a>	MEF2C
+TFDP1	-t>	PMAIP1
+TFDP1	-t>	MYC
+TFDP1	-t>	CAV1
+TFDP1	-t>	IL2RA
+GLI1	-t>	PTCH1
+GLI1	-t>	FOXA2
+PXN	-a>	PIK3R1
+PXN	-a>	SRC
+PXN	-a>	PIK3CA
+NR3C1	-t|	SGK1
+NR3C1	-a>	ANXA1
+NR3C1	-a>	PIK3CA
+NR3C1	-t|	CSF2
+NR3C1	-t>	SGK1
+NR3C1	-a>	GTF2A1
+NR3C1	-a>	GTF2E1
+NR3C1	-t|	BAX
+NR3C1	-t>	DUSP1
+NR3C1	-t|	CDKN1A
+NR3C1	-a>	TAFs
+NR3C1	-t|	IL5
+NR3C1	-a>	PIK3R1
+NR3C1	-t>	IFNB1
+NR3C1	-a>	RELA
+NR3C1	-a>	chromatin remodeling (abstract)
+SMARCB1	-t>	CDKN1A
+SMARCB1	-a>	GTF2A1
+SMARCB1	-a>	GTF2E1
+SMARCB1	-a>	TAFs
+SMARCB1	-a>	NR3C1
+SMARCB1	-t>	IFNB1
+SMARCB1	-a>	chromatin remodeling (abstract)
+DAXX	-a>	JNK cascade (abstract)
+AR	-a|	cell proliferation (abstract)
+AR	-t>	SMARCC1
+AR	-a>	cell proliferation (abstract)
+TP53BP1	-a>	CHEK2
+IGHE	-a>	GAB2
+IGHE	-a>	PIK3R1
+IGHE	-a>	SHC1
+IGHE	-a>	NFATC2
+IGHE	-a|	JUN
+IGHE	-a|	FOS
+IGHE	-a>	PIK3CA
+NF1	-a>	NR3C1
+NF1	-a>	GTF2A1
+NF1	-a>	GTF2E1
+NF1	-a>	TAFs
+NF1	-a>	chromatin remodeling (abstract)
+KIT	-a>	PIK3R1
+KIT	-a>	PIK3CA
+KIT	-a>	SHC1
+CREBBP	-a>	TP53
+CREBBP	-t|	MYC
+CREBBP	-t>	GLI1
+CREBBP	-t>	KIT
+CREBBP	-t>	CCND1
+CREBBP	-t>	BCL2
+CREBBP	-t|	CCND1
+CREBBP	-t>	IFNB1
+CREBBP	-t>	MYC
+CREBBP	-t>	IL2RA
+POU2F1	-a>	cell proliferation (abstract)
+POU2F1	-t>	CCND1
+POU2F1	-t>	IL3
+BCL2	-a>	DIABLO

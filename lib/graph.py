@@ -1,5 +1,6 @@
 import random
 from factor import *
+import copy
 
 class Graph:
 	'''
@@ -86,6 +87,61 @@ class Graph:
 		fh.close()
 	
 		return (net)
+
+	def clone(self):
+
+		graph_hash = copy.copy(self.graph)
+
+	def permuteEdgeTypes(self):
+		"""
+		Perform random swaps of edge interactions
+		"""
+		permuted_graph = copy.copy(self)
+		# swap about half the edges
+		i = len(self.graph)/2
+		while i > 0:
+			# swap 
+			sourceA, targetA = random.choice(permuted_graph.graph.keys())
+			iTypeA, emA = permuted_graph.graph[(sourceA, targetA)]
+			sourceB, targetB = random.choice(permuted_graph.graph.keys())
+			iTypeB, emB = permuted_graph.graph[(sourceB, targetB)]
+			permuted_graph.graph[(sourceA, targetA)] = (iTypeB, emB)
+			permuted_graph.graph[(sourceB, targetB)] = (iTypeA, emA)
+
+			i -= 1
+
+		# return a new graph object		
+		return permuted_graph
+
+	def permuteEdges(self):
+		"""
+		Perform random swaps of edge interactions
+		"""
+		permuted_graph = copy.copy(self)
+		# swap about half the edges
+		i = len(self.graph)/2
+		while i > 0:
+			# swap edge targets
+			sourceA, targetA = random.choice(permuted_graph.graph.keys())
+			iTypeA, emA = permuted_graph.graph[(sourceA, targetA)]
+			sourceB, targetB = random.choice(permuted_graph.graph.keys())
+			iTypeB, emB = permuted_graph.graph[(sourceB, targetB)]
+
+			# can't be the same random choice, obviously...
+			if sourceA == sourceB or targetA == targetB:
+				continue
+
+			# add edges
+			permuted_graph.graph[(sourceA, targetB)] = (iTypeA, emA)
+			permuted_graph.graph[(sourceB, targetA)] = (iTypeB, emB)
+
+			del permuted_graph.graph[(sourceA, targetA)]
+			del permuted_graph.graph[(sourceB, targetB)]
+
+			i -= 1
+
+		# return a new graph object		
+		return permuted_graph
 	
 	def buildFactors(self, shared):
 
@@ -203,6 +259,9 @@ class Graph:
 
 	def printSampleLL(self):
 		self.obs.printSampleLL()
+
+	def meanSampleLL(self):
+		return self.obs.meanLL()
 		
 class SharedEMStep:
 
@@ -324,6 +383,20 @@ class Obs:
 		'''
 		for sample in self.sample_order:
 			print sample+"\t"+str(self.ssl[sample])
+
+	def meanLL(self):
+		'''
+			Parse and ordered list of sample-specific log likelihood scores
+		'''
+		sum = 0
+		for sample in self.sample_order:
+
+			if sample not in self.ssl:
+				continue
+
+			sum += self.ssl[sample]
+		
+		return sum/float(len(self.sample_order))
 
 
 	def setHeader(self, header):
