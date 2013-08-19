@@ -24,29 +24,50 @@ BINARY_VALUES = {
 }
 
 def classifyInteraction(i):
-	componentRE = re.compile(".*component.*")
-	activatingRE = re.compile(".*-(\S?)>.*")
-	inactivatingRE = re.compile(".*-(\S?)|.*")
-	rewiredAC = re.compile(".*-REWIRED>.*")
-	rewiredIN = re.compile(".*-REWIRED|.*")
+	"""
+	
+	Returns the edge activation type (-1,0,1), and the textual description
 
+	>>> classifyInteraction("component>")
+	(0, 'component')
+	>>> classifyInteraction("-a>")
+	(1, 'a')
+	>>> classifyInteraction("-t>")
+	(1, 't')
+	>>> classifyInteraction("-t|")
+	(-1, 't')
+	>>> classifyInteraction("-a|")
+	(-1, 'a')
+	>>> classifyInteraction("HPRD>")
+	(1, 'INTERACTS')
+	>>> classifyInteraction("REWIRED>")
+	(1, 'REWIRED')
+	"""
+	componentRE = re.compile("^-?component>$")
+	activatingRE = re.compile("^-?(\S)>$")
+	inactivatingRE = re.compile("^-?(\S)\|$")
+	rewiredAC = re.compile("^-?REWIRED>$")
+	rewiredIN = re.compile("^-?REWIRED\|$")
+	
 	if componentRE.match(i):
-		return (0, "c")
+		return (0, "component")
 	elif activatingRE.match(i):
 		type = activatingRE.match(i)
 		return (1, type.group(1))
 	elif inactivatingRE.match(i):
 		type = inactivatingRE.match(i)
-		return (2, type.group(1))
+		return (-1, type.group(1))
 	elif rewiredAC.match(i):
-		type = "a"
+		type = "REWIRED"
 		return (1, type)
 	elif rewiredIN.match(i):
-		type = "t"
-		return (2, type)
+		type = "REWIRED"
+		return (-1, type)
 	else:
-		# default to activating links for HPRD
-		return (1, "a")
+		# default to activating links for HPRD or other protein
+		# component links. These are bi-directional
+		return (1, "INTERACTS")
+
 
 def hash2set(hashmap):
 
@@ -264,26 +285,23 @@ def tupleset2hash(setHash):
 def binarizeValue(val, threshold):
 
 	if abs(val) < threshold:
-		return BINARY_VALUES["UNDEF"]
+		return BINARY_VALUES['UNDEF']
 	elif val > 0:
-		return BINARY_VALUES["UP"]
+		return BINARY_VALUES['UP']
 	else:
-		return BINARY_VALUES["DOWN"]
+		return BINARY_VALUES['DOWN']
 
-def obsVals(value):
-
-	return value
-	
-	## remove
-	value = int(value)
-	if value == 0:
-		return 1
-	elif value == 1:
-		return 2
-	elif value == -1:
-		return 0
-	else:
-		return "NA"
+#def obsVals(value):
+#
+#	value = int(value)
+#	if value == 0:
+#		return "1"
+#	elif value == 1:
+#		return "2"
+#	elif value == -1:
+#		return "0"
+#	else:
+#		return "NA"
 
 def convertNetwork(network, rppa_data, expr_data):
 	"""
@@ -297,6 +315,12 @@ def convertNetwork(network, rppa_data, expr_data):
 		nodes.add(source)
 		for (interaction, target) in network[source]:
 			nodes.add(target)
+			a_type, edge_type = classifyInteraction(interaction)
+			interaction = None
+			if a_type == 1:
+				interaction = "->"
+			elif a_type == -1:
+				interaction = "-|"
 			edge = (source, target, interaction, "E")
 			edge_list.append(edge)
 
@@ -305,7 +329,7 @@ def convertNetwork(network, rppa_data, expr_data):
 		if node in rppa_data:
 			edge_list.append(("rppa:"+node, node, "->>", "S.P"))
 		if node in expr_data:
-			edge_list.append((node, "tm:"+node, "->>", "S.T"))
+			edge_list.append(("expr:"+node, node, "->>", "S.T"))
 			
 	return edge_list	 
 
@@ -330,7 +354,6 @@ def parseLabels(file):
 def parseRPPA(file):
 	
 	header = None
-	gene_data = {}
 	samples = {}
 	for line in open(file, 'r'):
 		parts = line.rstrip().split("\t")
@@ -343,19 +366,17 @@ def parseRPPA(file):
 			continue
 
 	
-		gene_data[gene] = []
 		for i in range(1, len(parts)):
 			val = float(parts[i])
 			sample_name = header[i]
 			samples[sample_name][gene] = val
 			# add gene data to array
-			gene_data[gene].append(val)
 		
 	return samples
 		
 # THRESHOLDS
-TF_THRESHOLD = 5.0
-RPPA_THRESHOLD = 0.5
+TF_THRESHOLD = 25.0
+RPPA_THRESHOLD = 0.25
 
 subnetwork = parseNet(opts.subnetwork)
 parents, children = getTFparents(opts.full_network)
@@ -365,15 +386,25 @@ expression_data = parseMatrix(opts.expression, 0.0, TF_THRESHOLD, tf_genes, pare
 # data[sample][node]
 rppa_data = parseRPPA(opts.rppa)
 
-# generate orderings for both datasets
+# generate gene orderings for both datasets, if included in one or more sample
+# , for each dataset
+rppa_genes = set()
+expr_genes = set()
 rppa_genes_order = []
 expr_genes_order = []
-for g in rppa_data:
-	rppa_genes_order.append(g)
-for g in expression_data:
-	expr_genes_order.append(g)
+for sample in rppa_data:
+	for gene in rppa_data[sample]:
+		rppa_genes.add(gene)
+for sample in expression_data:
+	for gene in expression_data[sample]:
+		expr_genes.add(gene)
 
-converted_network = convertNetwork(subnetwork, rppa_data, expression_data)
+for gene in expr_genes:
+	expr_genes_order.append(gene)
+for gene in rppa_genes:
+	rppa_genes_order.append(gene)
+
+converted_network = convertNetwork(subnetwork, rppa_genes_order, expr_genes_order)
 
 output_network, output_obs = opts.output_files.split(":")
 output_obs_fh = open(output_obs, 'w')	
@@ -384,14 +415,14 @@ for sample in rppa_data:
 	for gene in rppa_genes_order:
 		if gene in rppa_data[sample]:
 			# convert to binary value
-			v = obsVals(binarizeValue(rppa_data[sample][gene], RPPA_THRESHOLD))
+			v = binarizeValue(rppa_data[sample][gene], RPPA_THRESHOLD)
 			printstr += "\t"+str(v)
 		else:
 			printstr += "\t"+BINARY_VALUES["UNDEF"]
 
 	for e in expr_genes_order:
 		if sample in expression_data and e in expression_data[sample]:
-			v = obsVals(binarizeValue(expression_data[sample][e], TF_THRESHOLD))
+			v = binarizeValue(expression_data[sample][e], TF_THRESHOLD)
 			printstr += "\t"+str(v)
 		else:
 			printstr += "\t"+BINARY_VALUES["UNDEF"]

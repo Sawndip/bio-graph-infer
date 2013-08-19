@@ -165,7 +165,8 @@ class Graph:
 			elif iType == "-||":
 				f = P_Factor(factorID, ((source, 3), (target, 3)))
 			elif iType == "->>":
-				f = TM_Factor(factorID, ((source, 3), (target, 3)))
+				#f = TM_Factor(factorID, ((source, 3), (target, 3)))
+				f = AC_Factor(factorID, ((source, 3), (target, 3)))
 			else:
 				raise Exception("Unsupported interaction type!"+iType)
 
