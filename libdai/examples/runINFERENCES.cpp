@@ -54,7 +54,7 @@ int main() {
         clamped->run();
 
         Real sample_logZ = clamped->logZ();
-		cout << sample_logZ << endl;
+		cout << "sample logZ:\t" << sample_logZ << endl;
 
 		// output variable posterior inferences for this Sample
   		for (size_t i = 0; i < Network.nrVars(); ++i) 
@@ -62,16 +62,12 @@ int main() {
 
 			// get the belief states for this variable
       		const Var& v = Network.var(i);
+			cout << v << "variable:\t" << endl;
+
 			Factor belief = clamped->belief(v);
       		vector<double> posteriors;
-      		bool beliefEqualOne = false;
       		for (size_t j = 0; j < belief.nrStates(); ++j)
 			{
-	  			if(belief[j] == 1)
-	    		{
-	      			beliefEqualOne = true;
-	      			break;
-	    		}
 	  			posteriors.push_back(belief[j]);
 			}	
 
