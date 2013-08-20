@@ -57,10 +57,39 @@ int main() {
 		cout << sample_logZ << endl;
 
 		// output variable posterior inferences for this Sample
-  		for (size_t i = 0; i < Network.nrVars(); ++i) {
+  		for (size_t i = 0; i < Network.nrVars(); ++i) 
+		{
+
+			// get the belief states for this variable
       		const Var& v = Network.var(i);
 			Factor belief = clamped->belief(v);
-		}	
+      		vector<double> posteriors;
+      		bool beliefEqualOne = false;
+      		for (size_t j = 0; j < belief.nrStates(); ++j)
+			{
+	  			if(belief[j] == 1)
+	    		{
+	      			beliefEqualOne = true;
+	      			break;
+	    		}
+	  			posteriors.push_back(belief[j]);
+			}	
+
+	  		double down = posteriors[0];
+	  		double nc = posteriors[1];
+	  		double up = posteriors[2];
+
+	  		if (nc > down && nc > up)
+	    		cout << "0";
+	  		else if (down > up)
+	    		cout << (-1.0*down);
+	  		else
+	    		cout << up;
+
+			cout << "\t";
+		}
+      	cout << endl;
+
         delete clamped;
     }
 	// InfAlg* cloned = inf->clone();

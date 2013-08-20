@@ -29,6 +29,7 @@ fg.printOBS(opts.output+"/test.tab")
 # run the libDAI code to do INFERENCE on the learned factor graph it will read this by default
 call(["cp",opts.fgraph, opts.output+"/learned.fg"])
 print("Running INFERENCE...")
+print "cd "+opts.output+" && "+"../"+opts.bin
 output = call("cd "+opts.output+" && "+"../"+opts.bin+" > samples.sll 2>inf.err", shell=True)
 
 sllFH = open(opts.output+"/samples.sll", 'r')

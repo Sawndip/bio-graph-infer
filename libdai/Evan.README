@@ -1,0 +1,2 @@
+DYLIB_LIBRARY_PATH has to be set to the directory with the libdai.a and libdai.dylib variable (mac osx uses
+this dynamic library).
