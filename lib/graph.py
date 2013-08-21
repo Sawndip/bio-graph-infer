@@ -370,14 +370,18 @@ class Obs:
 			Parse and ordered list of sample-specific log likelihood scores
 		'''
 		self.ssl = {}
+		self.sample_labels = {}
 		idx = 0
 		for line in fh:
 			val = None
 			try: 
-				val = float(line.rstrip())
+				desc, logZ, labelProbTable, labelStateCall = line.rstrip().split("\t")
+				val = float(logZ)
+				labelState = int(labelStateCall)
 			except:
 				continue
 			self.ssl[self.sample_order[idx]] = val
+			self.sample_labels[self.sample_order[idx]] = (labelState, labelProbTable)
 			idx += 1
 
 	def printSampleLL(self):
@@ -385,7 +389,7 @@ class Obs:
 			Parse and ordered list of sample-specific log likelihood scores
 		'''
 		for sample in self.sample_order:
-			print sample+"\t"+str(self.ssl[sample])
+			print sample+"\t"+str(self.ssl[sample])+"\t"+"\t".join([str(v) for v in self.sample_labels[sample]])
 
 	def meanLL(self):
 		'''

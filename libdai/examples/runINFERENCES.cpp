@@ -61,6 +61,11 @@ int main() {
   		for (size_t i = 0; i < Network.nrVars(); ++i) 
 		{
 		*/
+
+			/*
+				The first variable should be set to the label node in the observation file
+				Get it's inference value. 	
+			*/
 			// get the belief states for this variable
       		const Var& v = Network.var(0);
 			//cout << v << "variable:\t" << endl;
@@ -76,13 +81,15 @@ int main() {
 	  		double nc = posteriors[1];
 	  		double up = posteriors[2];
 
+			cout << down << ":" << nc << ":" << up;
+			cout << "\t";
+
 	  		if (nc > down && nc > up)
 	    		cout << "0";
 	  		else if (down > up)
 	    		cout << (-1.0*down);
 	  		else
 	    		cout << up;
-
 		/*
 			cout << "\t";
 		}
