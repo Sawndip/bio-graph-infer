@@ -265,6 +265,9 @@ class Graph:
 
 	def meanSampleLL(self):
 		return self.obs.meanLL()
+	
+	def getSampleLLS(self):
+		return self.obs.getSampleLLS()
 		
 class SharedEMStep:
 
@@ -383,6 +386,14 @@ class Obs:
 			self.ssl[self.sample_order[idx]] = val
 			self.sample_labels[self.sample_order[idx]] = (labelState, labelProbTable)
 			idx += 1
+
+	def getSampleLLS(self):
+
+		sample_lls = []
+		for sample in self.sample_order:
+			sample_lls.append(self.ssl[sample])
+
+		return sample_lls
 
 	def printSampleLL(self):
 		'''
