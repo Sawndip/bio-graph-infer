@@ -88,10 +88,6 @@ class Graph:
 	
 		return (net)
 
-	def clone(self):
-
-		graph_hash = copy.copy(self.graph)
-
 	def permuteEdgeTypes(self):
 		"""
 		Perform random swaps of edge interactions
@@ -235,6 +231,20 @@ class Graph:
 
 		fh.close()
 
+	def split(self, folds=5):
+		"""
+		Split the observation data into the given number of folds and clone this factor
+		with each clone containing one data fold
+		"""
+		observations = self.obs.split(folds)	
+		folds = []
+		for obs in observations:
+			fg_fold = copy.copy(self)	
+			fg_fold.obs = observations
+			folds.append(fg_fold)
+
+		return folds
+	
 	def printOBS(self, file):
 
 		fh = None
@@ -368,6 +378,38 @@ class Obs:
 			self.samples[parts[0]] = parts[1:]
 			self.sample_order.append(parts[0])
 
+	def split(self, folds):
+	
+		data_points = len(self.samples)
+		data_per_group = data_points/int(folds)
+		residual = data_points - data_per_group*int(folds)
+
+		# create a new Obs object with only one data fold
+		newObservations = []
+		new_obs = copy.copy(self)
+		new_obs.samples = {}
+		new_obs.sample_order = []
+		counter = 0
+		for sample in self.samples:
+
+			# in consequence, this will add all residual points to the last fold,
+			# but this shouldn't be a problem for most analysis.
+			if counter == data_points:
+				break
+	
+			if counter % data_per_group == 0:	
+				newObservations.append(new_obs)
+				new_obs = copy.copy(self)
+				new_obs.samples = {}
+				new_obs.sample_order = []
+				continue
+
+			sample_name = self.sample_order[counter]
+			new_obs.samples[sample_name] = self.samples[sample_name]		
+			new_obs.sample_order.append(sample)
+
+		return newObservations
+	
 	def addSampleLL(self, fh):
 		'''
 			Parse and ordered list of sample-specific log likelihood scores

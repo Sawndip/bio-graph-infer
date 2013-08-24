@@ -9,8 +9,8 @@ sys.path.append(sys.path[0]+"/../lib")
 from optparse import OptionParser
 parser = OptionParser()
 parser.add_option("--pathway",dest="pathway",action="store",default=None)
-parser.add_option("--train",dest="train",action="store",default=None)
-parser.add_option("--test",dest="test",action="store",default=None)
+parser.add_option("--set1",dest="train",action="store",default=None)
+parser.add_option("--set2",dest="test",action="store",default=None)
 parser.add_option("--output",dest="output",action="store",default=None)
 parser.add_option("--libdaiBIN",dest="bin",action="store",default=None)
 parser.add_option("--no_shared_em",dest="shared",action="store_false",default=True)
@@ -156,19 +156,32 @@ def trainTestCV(pathway, training_file, test_file, output_dir, em_bin, inf_bin, 
 	##
 	allLLS = []
 	training_fg_folds = train_fg.split(folds=5)
-	if training_file == test_file:
-		for i in range(0, len(training_fg_folds)):
-			for j in range(0, len(training_fg_folds)):
-				if i == j:
-					continue
+	for i in range(0, len(training_fg_folds)):
+		for j in range(0, len(training_fg_folds)):
+			if i == j and training_file == test_file:
+				continue
 
-				trainFG = training_fg_folds[i]	
-				testFG = training_fg_folds[j]	
-				sampleLLS, meanLL = trainTestCV(trainFG, testFG, output_dir, em_bin, inf_bin)
-				for l in sampleLLS:
-					allLLS.append(l)
+			trainFG = training_fg_folds[i]	
+			testFG = training_fg_folds[j]	
+			sampleLLS, meanLL = trainTestCV(trainFG, testFG, output_dir, em_bin, inf_bin)
+			for l in sampleLLS:
+				allLLS.append(l)
 
 	return allLLS
 
-meanLL = trainTestRound(opts.pathway, opts.train, opts.test, opts.output, libdai_EM_BIN, libdai_INF_BIN, opts.shared)
-print "Real Mean LL:\t"+str(meanLL)
+os.mkdir(opts.output)
+# get sample log-likelihood testing 
+print "Training / Testing on Set1:"
+sampleLLs_1 = trainTestRound(opts.pathway, opts.train, opts.train, opts.output, libdai_EM_BIN, libdai_INF_BIN, opts.shared)
+print "Training / Testing on Set2:"
+sampleLLs_2 = trainTestRound(opts.pathway, opts.test, opts.test, opts.output, libdai_EM_BIN, libdai_INF_BIN, opts.shared)
+print "Training Set1 / Testing on Set2:"
+sampleLLs_3 = trainTestRound(opts.pathway, opts.train, opts.test, opts.output, libdai_EM_BIN, libdai_INF_BIN, opts.shared)
+print "Training Set2 / Testing on Set1:"
+sampleLLs_4 = trainTestRound(opts.pathway, opts.test, opts.train, opts.output, libdai_EM_BIN, libdai_INF_BIN, opts.shared)
+
+print "\t".join(["Control1", "Eval1", "Control2", "Eval2"])
+for i in range(0, len(sampleLLs_1)):
+	print "\t".join([str(v) for v in (sampleLLs_1[i], sampleLLs_3[i], sampleLLs_2[i], sampleLLs_4[i])])
+
+
