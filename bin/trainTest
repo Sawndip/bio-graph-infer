@@ -1,0 +1,174 @@
+#!/usr/bin/env	python2.7
+
+import os, sys
+import copy
+from subprocess import call
+import random
+sys.path.append(sys.path[0]+"/../lib")
+
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("--pathway",dest="pathway",action="store",default=None)
+parser.add_option("--train",dest="train",action="store",default=None)
+parser.add_option("--test",dest="test",action="store",default=None)
+parser.add_option("--output",dest="output",action="store",default=None)
+parser.add_option("--libdaiBIN",dest="bin",action="store",default=None)
+parser.add_option("--no_shared_em",dest="shared",action="store_false",default=True)
+(opts, args) = parser.parse_args()
+
+from factor import *
+from graph import *
+
+libdai_EM_BIN, libdai_INF_BIN = opts.bin.split(":")
+
+def splitEMfg(file):
+	'''
+		parse output of runEM, and extract the learned factor graph files, along with sample log likelihoods		
+	'''
+
+	fh = open(file, 'r')
+	learnedFGH = open(file+".fg",'w')
+	likelihoodFGH = open(file+".sll",'w')
+	lgSTATE = None
+	for line in fh:
+
+
+		# find the start line and skip comments after
+		if line.startswith("Learned factor graph:"):
+			lgSTATE = 0
+			continue
+		if lgSTATE == 0:
+			lgSTATE = 1
+			continue
+
+		if lgSTATE is None:
+			continue
+
+		# start of likelihood data
+		if line.startswith('-'):
+			lgSTATE = 2
+			
+		if lgSTATE == 1:
+			learnedFGH.write(line.rstrip()+"\n")	
+		elif lgSTATE == 2:	
+			likelihoodFGH.write(line.rstrip()+"\n")	
+	
+	learnedFGH.close()	
+	likelihoodFGH.close()	
+
+def getMIs(fg):
+
+	mis = {}
+	for tuple in fg:
+		mis[tuple] = fg.getMI(tuple)
+
+	return mis
+
+def permuteGraph(pathway, output_dir):
+
+	g = {}
+	for line in open(pathway, 'r'):
+		parts = line.rstrip().split("\t")
+		source = parts[0]
+		target = parts[1]
+		interaction = parts[2]
+		inference = parts[3]
+		g[(source, target)] = (interaction, inference)
+	
+	i = 3
+	while i > 0:
+		# swap edge targets
+		sourceA, targetA = random.choice(g.keys())
+		iTypeA, emA = g[(sourceA, targetA)]
+		sourceB, targetB = random.choice(g.keys())
+		iTypeB, emB = g[(sourceB, targetB)]
+
+		# can't be the same random choice, obviously...
+		if sourceA == sourceB or targetA == targetB:
+			continue
+
+		# add edges between these nodes
+		g[(sourceA, targetB)] = (iTypeA, emA)
+
+		del g[(sourceA, targetA)]
+
+		i -= 1
+
+	# write out the permuted graph
+	out = open(output_dir+"/permuted.pathway.tab",'w')
+	for (s, t) in g:
+		iType, em = g[(s,t)]
+		out.write("\t".join([s,t,iType,str(em)])+"\n")
+	out.close()
+
+	return output_dir+"/permuted.pathway.tab"
+	
+def trainTestRound(train_fg, test_fg, output_dir, em_bin, inf_bin):
+
+	# print training data to file	
+	train_fg.printOBS(output_dir+"/input.tab")
+	# run the libDAI code to do EM 
+	# Run EM on training data
+	output = call("cd "+output_dir+" && "+"../"+em_bin+" > learned.fg 2>em.err", shell=True)
+	
+	THRESHOLD = 0.15
+	# created  
+	# print observations
+
+	# print test data	
+	test_fg.printOBS(output_dir+"/test.tab")
+	# run the libDAI code to do INFERENCE on the learned factor graph it will read this by default
+	#print("Running INFERENCE...")
+	output = call("cd "+output_dir+" && "+"../"+inf_bin+" > samples.sll 2>inf.err", shell=True)
+	sllFH = open(output_dir+"/samples.sll", 'r')
+	#print "Sample Log Likelihoods"
+	test_fg.addSampleLL(sllFH)
+
+	# return the likelihood values and mean
+	return (test_fg.getSampleLLS(), test_fg.meanSampleLL())
+
+def trainTestCV(pathway, training_file, test_file, output_dir, em_bin, inf_bin, shared_params, permute=False):
+
+	train_fg = None
+	if permute:
+		permuted_pathway_file = permuteGraph(pathway, output_dir)
+		train_fg = Graph(permuted_pathway_file)
+	else:
+		train_fg = Graph(pathway)
+
+	# build training and test factor graphs
+	test_fg = copy.copy(train_fg)
+	training_obs = Obs(training_file)
+	# add observation nodes
+	train_fg.addObs(training_obs)
+	train_fg.buildFactors(shared_params)
+	# print out the factor graph and EM commands: this is static across the training/test folds
+	train_fg.printFactors(output_dir+"/input.fg")
+	train_fg.printEM(output_dir+"/input.em")
+
+	test_obs = Obs(test_file)
+	# add observation nodes
+	test_fg.addObs(test_obs)
+	test_fg.buildFactors(shared_params)
+
+	##
+	## Split Folds: do training
+	##
+	allLLS = []
+	training_fg_folds = train_fg.split(folds=5)
+	if training_file == test_file:
+		for i in range(0, len(training_fg_folds)):
+			for j in range(0, len(training_fg_folds)):
+				if i == j:
+					continue
+
+				trainFG = training_fg_folds[i]	
+				testFG = training_fg_folds[j]	
+				sampleLLS, meanLL = trainTestCV(trainFG, testFG, output_dir, em_bin, inf_bin)
+				for l in sampleLLS:
+					allLLS.append(l)
+
+	return allLLS
+
+meanLL = trainTestRound(opts.pathway, opts.train, opts.test, opts.output, libdai_EM_BIN, libdai_INF_BIN, opts.shared)
+print "Real Mean LL:\t"+str(meanLL)
