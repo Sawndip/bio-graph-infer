@@ -103,13 +103,14 @@ def permuteGraph(pathway, output_dir):
 
 	return output_dir+"/permuted.pathway.tab"
 	
-def trainTestRound(train_fg, test_fg, output_dir, em_bin, inf_bin):
+def trainTestRound(train_fg, test_fg, output_dir, em_bin, inf_bin, doLearn=True):
 
 	# print training data to file	
-	train_fg.printOBS(output_dir+"/input.tab")
-	# run the libDAI code to do EM 
-	# Run EM on training data
-	output = call("cd "+output_dir+" && "+"../"+em_bin+" > learned.fg 2>em.err", shell=True)
+	if doLearn:
+		train_fg.printOBS(output_dir+"/input.tab")
+		# run the libDAI code to do EM 
+		# Run EM on training data
+		output = call("cd "+output_dir+" && "+"../"+em_bin+" > learned.fg 2>em.err", shell=True)
 	
 	THRESHOLD = 0.15
 	# created  
@@ -156,29 +157,47 @@ def trainTestCV(pathway, training_file, test_file, output_dir, em_bin, inf_bin, 
 	##
 	allLLS = []
 	training_fg_folds = train_fg.split(folds=5)
+	
+	test_fg_folds = None
+	if training_file != test_file:
+		test_fg_folds = test_fg.split(folds=5)
 	for i in range(0, len(training_fg_folds)):
+		doLearn = True
 		for j in range(0, len(training_fg_folds)):
-			if i == j and training_file == test_file:
-				continue
+
+			print "index: "+str(i)+"\t"+str(j)
 
 			trainFG = training_fg_folds[i]	
-			testFG = training_fg_folds[j]	
-			sampleLLS, meanLL = trainTestCV(trainFG, testFG, output_dir, em_bin, inf_bin)
+			testFG = None
+			if training_file == test_file:
+				if i == j:
+					continue
+				else:
+					# just grab another fold from the single test/train validation set
+					testFG = training_fg_folds[j]
+			else:
+				testFG = test_fg_folds[j]
+			
+			sampleLLS, meanLL = trainTestRound(trainFG, testFG, output_dir, em_bin, inf_bin, doLearn)
 			for l in sampleLLS:
 				allLLS.append(l)
 
+			# no need to redo this learning step, since we're re-using the first training set
+			doLearn = False
+
+
 	return allLLS
 
-os.mkdir(opts.output)
+#os.mkdir(opts.output)
 # get sample log-likelihood testing 
 print "Training / Testing on Set1:"
-sampleLLs_1 = trainTestRound(opts.pathway, opts.train, opts.train, opts.output, libdai_EM_BIN, libdai_INF_BIN, opts.shared)
+sampleLLs_1 = trainTestCV(opts.pathway, opts.train, opts.train, opts.output, libdai_EM_BIN, libdai_INF_BIN, opts.shared)
 print "Training / Testing on Set2:"
-sampleLLs_2 = trainTestRound(opts.pathway, opts.test, opts.test, opts.output, libdai_EM_BIN, libdai_INF_BIN, opts.shared)
+sampleLLs_2 = trainTestCV(opts.pathway, opts.test, opts.test, opts.output, libdai_EM_BIN, libdai_INF_BIN, opts.shared)
 print "Training Set1 / Testing on Set2:"
-sampleLLs_3 = trainTestRound(opts.pathway, opts.train, opts.test, opts.output, libdai_EM_BIN, libdai_INF_BIN, opts.shared)
+sampleLLs_3 = trainTestCV(opts.pathway, opts.train, opts.test, opts.output, libdai_EM_BIN, libdai_INF_BIN, opts.shared)
 print "Training Set2 / Testing on Set1:"
-sampleLLs_4 = trainTestRound(opts.pathway, opts.test, opts.train, opts.output, libdai_EM_BIN, libdai_INF_BIN, opts.shared)
+sampleLLs_4 = trainTestCV(opts.pathway, opts.test, opts.train, opts.output, libdai_EM_BIN, libdai_INF_BIN, opts.shared)
 
 print "\t".join(["Control1", "Eval1", "Control2", "Eval2"])
 for i in range(0, len(sampleLLs_1)):

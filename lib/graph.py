@@ -38,6 +38,12 @@ class Graph:
 		# add the observation (Obs) object here
 		self.obs = observations
 
+		# fix the observation header to use indexed variable numbers, corresponding to
+		# the factor graph derived from this pathway file
+		new_header, retained_indexes = self.mapNodes(self.obs.header)
+		self.obs.setHeader(new_header)
+		self.obs.retained_indexes = retained_indexes
+
 	def nodeID2Name(self, id):
 		return self.reverseNodeMap[id]
 	
@@ -238,9 +244,9 @@ class Graph:
 		"""
 		observations = self.obs.split(folds)	
 		folds = []
-		for obs in observations:
+		for observation in observations:
 			fg_fold = copy.copy(self)	
-			fg_fold.obs = observations
+			fg_fold.obs = observation
 			folds.append(fg_fold)
 
 		return folds
@@ -252,12 +258,6 @@ class Graph:
 			fh = open(file, 'w')
 		except:
 			raise Exception("Error: cannot open observation file for writing"+file)
-
-		# fix the observation header to use indexed variable numbers, corresponding to
-		# the factor graph derived from the pathway file
-		new_header, retained_indexes = self.mapNodes(self.obs.header)
-		self.obs.setHeader(new_header)
-		self.obs.retained_indexes = retained_indexes
 
 		# print to the output file 
 		self.obs.printHeader(fh)
@@ -390,23 +390,27 @@ class Obs:
 		new_obs.samples = {}
 		new_obs.sample_order = []
 		counter = 0
-		for sample in self.samples:
+		for i in range(0, len(self.sample_order)):
 
-			# in consequence, this will add all residual points to the last fold,
-			# but this shouldn't be a problem for most analysis.
-			if counter == data_points:
-				break
-	
-			if counter % data_per_group == 0:	
+			sample_name = self.sample_order[counter]
+
+			# retain this one, reset the data
+			if counter % data_per_group == 0 and (counter > 0):	
+
 				newObservations.append(new_obs)
+
+				new_obs = None
 				new_obs = copy.copy(self)
 				new_obs.samples = {}
 				new_obs.sample_order = []
+
+				counter += 1
 				continue
 
-			sample_name = self.sample_order[counter]
 			new_obs.samples[sample_name] = self.samples[sample_name]		
-			new_obs.sample_order.append(sample)
+			new_obs.sample_order.append(sample_name)
+
+			counter += 1
 
 		return newObservations
 	
@@ -449,6 +453,9 @@ class Obs:
 			Parse and ordered list of sample-specific log likelihood scores
 		'''
 		sum = 0
+		if len(self.sample_order) == 0:
+			raise Exception("Error: no sample likelihood's loaded")
+
 		for sample in self.sample_order:
 
 			if sample not in self.ssl:
