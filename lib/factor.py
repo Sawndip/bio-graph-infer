@@ -284,74 +284,6 @@ class IA_Factor(Factor):
 		self.probs[(1,2)] = INT
 		self.probs[(2,2)] = MINOR
 		
-class TM_Factor(Factor):
-	'''
-	Represents an activating link for two nodes, with 3 states each: -1, 0, 1
-	'''
-	def makeTable(self):
-		'''
-		Iterate over all possible states of input variables: set the 
-		'''
-		MAJOR = 0.9
-		INT = 0.333
-		MINOR = 0.05
-		# P(B|A) 
-		# A = 0 , B = 0 0.6
-		# A = 1 , B = 0 0.333
-		# A = 2 , B = 0 0.2
-		# A = 0 , B = 1 0.2
-		# A = 1 , B = 1 0.333
-		# A = 2 , B = 1 0.2
-		# A = 0 , B = 2 0.2
-		# A = 1 , B = 2 0.333
-		# A = 2 , B = 2 0.6
-
-		self.probs = {}
-		for state in self.states:
-			if state[0] == 1:
-				# this is the neutral state: 
-				# set to no effect state
-				self.probs[state] = INT
-			elif state[0] == state[1]:
-				# activating, inactivating
-				self.probs[state] = MAJOR
-			else:
-				self.probs[state] = MINOR
-
-class P_Factor(Factor):
-	'''
-	Represents an in-activating link for two nodes, with 3 states each: -1, 0, 1
-	'''
-	def makeTable(self):
-		'''
-		Iterate over all possible states of input variables: set the 
-		'''
-		MAJOR = 0.9
-		INT = 0.333
-		MINOR = 0.05
-
-		self.probs = {}
-		# P(B|A) 
-		# A = 0 , B = 0 0.2
-		# A = 1 , B = 0 0.333
-		# A = 2 , B = 0 0.6
-		# A = 0 , B = 1 0.2
-		# A = 1 , B = 1 0.333
-		# A = 2 , B = 1 0.2
-		# A = 0 , B = 2 0.6
-		# A = 1 , B = 2 0.333
-		# A = 2 , B = 2 0.2
-
-		self.probs[(0,0)] = MINOR
-		self.probs[(1,0)] = INT
-		self.probs[(2,0)] = MAJOR
-		self.probs[(0,1)] = MINOR
-		self.probs[(1,1)] = INT
-		self.probs[(2,1)] = MINOR
-		self.probs[(0,2)] = MAJOR
-		self.probs[(1,2)] = INT
-		self.probs[(2,2)] = MINOR
-		
 class UNIFORM_Factor(Factor):
 	'''
 
@@ -378,3 +310,25 @@ class UNIFORM_Factor(Factor):
 			#print "\t".join([str(i) for i in self.flatten(state)])
 		
 		
+class AND_Triple_Factor(Factor):
+	'''
+
+	'''
+	def makeTable(self):
+		'''
+		Iterate over all possible states of input variables: set the 
+		'''
+		# P(B|A) 
+		# A = 0 , B = 0, C = 0 0.1
+		# A = 1 , B = 0, C = 0 0.1
+		# A = 2 , B = 0, C = 0 0.1
+
+		FLAT = 0.1
+		AND = 1.0
+		self.probs = {}
+		for state in self.states:
+			self.probs[state] = FLAT
+	
+		# only this probability is higher...	
+		self.probs[(2,2,2)] = AND	
+			
